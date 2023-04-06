@@ -1,0 +1,65 @@
+{
+  "name": "express-boiler-plate",
+  "version": "1.0.0",
+  "author": "Your basket <yourbasket@gmail.com.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://gomadarling21@bitbucket.org/gomadarling21/yourbasketapi.git"
+  },
+  "homepage": "https://gomadarling21@bitbucket.org/gomadarling21/yourbasketapi.git",
+  "bugs": {
+    "url": "https://gomadarling21@bitbucket.org/gomadarling21/yourbasketapi.git"
+  },
+  "scripts": {
+    "start": "npm run nodemon",
+    "dev": "cross-env NODE_ENV=development node ./api/api.js",
+    "nodemon": "nodemon --exec npm run dev",
+    "create-sqlite-db": "shx touch ./db/database.sqlite",
+    "drop-sqlite-db": "shx rm ./db/database.sqlite",
+    "lint": "eslint ./api/. ./config/. ./test/.",
+    "prepush": "npm test",
+    "pretest": "npm run lint",
+    "production": "cross-env NODE_ENV=production node ./api/api.js",
+    "test": "npm run create-sqlite-db; cross-env NODE_ENV=testing jest --coverage",
+    "test-ci": "jest --coverage --forceExit"
+  },
+  "jest": {
+    "globals": {
+      "__DEV__": true
+    },
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "/node_modules/"
+    ]
+  },
+  "dependencies": {
+    "bcrypt": "^3.0.8",
+    "body-parser": "^1.18.2",
+    "core-js": "^2.6.9",
+    "cors": "^2.8.4",
+    "dotenv": "^16.0.3",
+    "express": "^4.16.3",
+    "express-routes-mapper": "^1.0.2",
+    "helmet": "^3.12.0",
+    "jsonwebtoken": "^8.2.1",
+    "lodash": "^4.17.15",
+    "mysql2": "^2.1.0",
+    "nodemailer": "^6.4.6",
+    "sequelize": "^5.21.3",
+    "sqlite3": "^4.0.0",
+    "swagger-jsdoc": "^3.5.0",
+    "swagger-ui-express": "^4.1.3"
+  },
+  "devDependencies": {
+    "cross-env": "^5.1.4",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.11.0",
+    "husky": "^0.14.3",
+    "jest": "^24.8.0",
+    "nodemon": "^1.17.3",
+    "shx": "^0.2.2",
+    "supertest": "^3.0.0"
+  }
+}
