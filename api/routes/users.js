@@ -62,11 +62,11 @@ router.post('/authorize', (req, res) => UserContoller().login(req, res));
  *             password:
  *               type: string
  *               format: password
+ *             password2:
+ *               type: string
  *             first_name:
  *               type: string
  *             last_name:
- *               type: string
- *             domain_url:
  *               type: string
  *             phone:
  *               type: string
