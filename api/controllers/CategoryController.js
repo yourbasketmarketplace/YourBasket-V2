@@ -3,14 +3,12 @@ const Category = require('../models/Category');
 const CategoryController = () => {
   const create = async (req, res) => {
     // body is part of a form-data
-    const {
-      body,
-    } = req;
-
     try {
-      const category = await Category.create({
-        name: body.name,
-      });
+      if (req.file && req.file.filename) {
+        req.body.file_name = req.file.filename;
+        req.body.file_path = req.file.path.replace('public/', '');
+      }
+      const category = await Category.create(req.body);
 
       if (!category) {
         return res.status(400).json({
@@ -80,6 +78,10 @@ const CategoryController = () => {
     } = req;
 
     try {
+      if (req.file && req.file.filename) {
+        req.body.file_name = req.file.filename;
+        req.body.file_path = req.file.path.replace('public/', '');
+      }
       const category = await Category.findById(id);
 
       if (!category) {
@@ -89,7 +91,10 @@ const CategoryController = () => {
       }
 
       const updatedCategory = await category.update({
-        name: body.name,
+        body,
+        where: {
+          id,
+        },
       });
 
       return res.status(200).json({

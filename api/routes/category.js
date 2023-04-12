@@ -1,9 +1,7 @@
 const router = require('express').Router();
-const CategoryContoller = require('../controllers/CategoryController')
-
+const CategoryContoller = require('../controllers/CategoryController');
+const fileUpoload = require('../services/fileUpload.service');
 const auth = require('../policies/auth.policy');
-
-router.use('*', (req, res, next) => auth(req, res, next))
 
 /**
  * @swagger
@@ -18,21 +16,12 @@ router.use('*', (req, res, next) => auth(req, res, next))
  *     consumes:
  *       - application/json
  *     parameters:
- *       - name: body
- *         in: body
- *         schema:
- *           type: object
- *           properties:
- *             name:
- *               type: string
- *             type:
- *               type: integer
- *             parent_id:
- *               type: integer
- *         required:
- *           -name
- *           -type
- *           -parent_id
+ *         - in: formData
+ *           name: image
+ *           type: file
+ *         - in: formData
+ *           name: name
+ *           type: string
  *     responses:
  *       200:
  *         description: Category Added
@@ -41,7 +30,7 @@ router.use('*', (req, res, next) => auth(req, res, next))
  *
  */
 
-router.post('/', (req, res) => CategoryContoller().create(req, res));
+router.post('/', auth, fileUpoload().signleUpload('image'), (req, res) => CategoryContoller().create(req, res));
 
 
 /**

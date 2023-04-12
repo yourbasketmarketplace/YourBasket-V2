@@ -9,7 +9,10 @@ const Category = sequelize.define('Category', {
     type: Sequelize.STRING,
     unique: false,
   },
-  imaage: {
+  file_name: {
+    type: Sequelize.STRING,
+  },
+  file_path: {
     type: Sequelize.STRING,
   },
   type: {
@@ -21,6 +24,11 @@ const Category = sequelize.define('Category', {
     type: Sequelize.DECIMAL,
     allowNull: false,
     defaultValue: '0',
+  },
+  status: {
+    type: Sequelize.ENUM,
+    values: ['active', 'inactive'],
+    defaultValue: 'active',
   },
 }, {
   tableName,

@@ -14,10 +14,14 @@ module.exports = (req, res, next) => {
       if (/^Bearer$/.test(scheme)) {
         tokenToVerify = credentials;
       } else {
-        return res.status(401).json({ msg: 'Format for Authorization: Bearer [token]' });
+        return res
+          .status(401)
+          .json({ msg: 'Format for Authorization: Bearer [token]' });
       }
     } else {
-      return res.status(401).json({ msg: 'Format for Authorization: Bearer [token]' });
+      return res
+        .status(401)
+        .json({ msg: 'Format for Authorization: Bearer [token]' });
     }
   } else if (req.body.token) {
     tokenToVerify = req.body.token;
