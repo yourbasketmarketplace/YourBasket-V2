@@ -33,6 +33,9 @@ const CategoryController = () => {
         where: {
           type,
         },
+        order: [
+          ['id', 'DESC'],
+        ],
       });
       return res.status(200).json({
         categories,
