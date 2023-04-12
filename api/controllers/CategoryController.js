@@ -28,9 +28,13 @@ const CategoryController = () => {
 
   const getAll = async (req, res) => {
     try {
+      const { type } = req.query;
       const categories = await Category.findAll();
       return res.status(200).json({
         categories,
+        where: {
+          type,
+        },
       });
     } catch (err) {
       return res.status(500).json({
