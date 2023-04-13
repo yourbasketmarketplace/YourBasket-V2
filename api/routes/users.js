@@ -1,6 +1,5 @@
 const router = require('express').Router();
-const UserContoller = require('../controllers/UserController')
-const auth = require('../policies/auth.policy');
+const UserContoller = require('../controllers/UserController');
 
 /**
  * @swagger

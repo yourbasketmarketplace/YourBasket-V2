@@ -13,8 +13,14 @@ const dbService = (environment, migrate) => {
     const {
       // eslint-disable-next-line no-unused-vars
       User,
+      Category,
+      Product,
     } = AllModels();
-
+    Category.hasMany(Category, { foreignKey: 'parent_id', sourceKey: 'id' });
+    Product.belongsTo(User, { foreignKey: 'user_id', targetKey: 'id' });
+    Product.belongsTo(Category, { foreignKey: 'master_category_id', targetKey: 'id' });
+    Product.belongsTo(Category, { foreignKey: 'category_id', targetKey: 'id' });
+    Product.belongsTo(Category, { foreignKey: 'sub_category_id', targetKey: 'id' });
     // eslint-disable-next-line no-console
     console.log('association....finish');
     return true;
@@ -98,6 +104,7 @@ const dbService = (environment, migrate) => {
   };
 
   const start = async () => {
+    association();
     switch (environment) {
       case 'development':
         await startDev();

@@ -1,14 +1,25 @@
-const Category = require('../models/Category');
-
-const CategoryController = () => {
+// eslint-disable-next-line no-unused-vars
+const AllModels = require('../services/model.service');
+const helperService = require('../services/helper.service');
+/** ****************************************************************************
+ *                              Agency service Controller
+ ***************************************************************************** */
+const ProductController = () => {
   const create = async (req, res) => {
     // body is part of a form-data
+    const { Product } = AllModels();
     try {
+      const reuireFiled = ['name', 'sku', 'cost_price', 'prouct_id', 'mrp'];
+
+      const checkField = helperService.checkRequiredParameter(reuireFiled, req.body);
+      if (checkField.isMissingParam) {
+        return res.status(400).json({ msg: checkField.message });
+      }
       if (req.file && req.file.filename) {
         req.body.file_name = req.file.filename;
         req.body.file_path = req.file.path.replace('public/', '');
       }
-      const category = await Category.create(req.body);
+      const category = await Product.create(req.body);
 
       if (!category) {
         return res.status(400).json({
@@ -28,23 +39,12 @@ const CategoryController = () => {
 
   const getAll = async (req, res) => {
     try {
-      const { type } = req.query;
-      let query = {
+      const { Product } = AllModels();
+      const categories = await Product.findAll({
         order: [
           ['id', 'DESC'],
         ],
-      };
-      if (type) {
-        query = {
-          where: {
-            type,
-          },
-          order: [
-            ['id', 'DESC'],
-          ],
-        };
-      }
-      const categories = await Category.findAll(query);
+      });
       return res.status(200).json({
         categories,
       });
@@ -58,9 +58,9 @@ const CategoryController = () => {
   const get = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-
+    const { Product } = AllModels();
     try {
-      const category = await Category.findOne({
+      const category = await Product.findOne({
         where: {
           id,
         },
@@ -87,7 +87,7 @@ const CategoryController = () => {
   const update = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-
+    const { Product } = AllModels();
     // body is part of form-data
     const {
       body,
@@ -98,7 +98,7 @@ const CategoryController = () => {
         req.body.file_name = req.file.filename;
         req.body.file_path = req.file.path.replace('public/', '');
       }
-      const category = await Category.findById(id);
+      const category = await Product.findById(id);
 
       if (!category) {
         return res.status(400).json({
@@ -128,9 +128,9 @@ const CategoryController = () => {
   const destroy = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-
+    const { Product } = AllModels();
     try {
-      const category = Category.findById(id);
+      const category = Product.findById(id);
 
       if (!category) {
         return res.status(400).json({
@@ -160,4 +160,4 @@ const CategoryController = () => {
   };
 };
 
-module.exports = CategoryController;
+module.exports = ProductController;

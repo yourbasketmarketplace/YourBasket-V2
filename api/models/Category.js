@@ -20,11 +20,6 @@ const Category = sequelize.define('Category', {
     allowNull: false,
     defaultValue: '0',
   },
-  parent_id: {
-    type: Sequelize.DECIMAL,
-    allowNull: false,
-    defaultValue: '0',
-  },
   status: {
     type: Sequelize.ENUM,
     values: ['active', 'inactive'],
