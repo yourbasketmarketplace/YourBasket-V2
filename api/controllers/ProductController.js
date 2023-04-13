@@ -9,7 +9,7 @@ const ProductController = () => {
     // body is part of a form-data
     const { Product } = AllModels();
     try {
-      const reuireFiled = ['name', 'sku', 'cost_price', 'prouct_id', 'mrp'];
+      const reuireFiled = ['name', 'sku', 'cost_price', 'product_id', 'mrp'];
 
       const checkField = helperService.checkRequiredParameter(reuireFiled, req.body);
       if (checkField.isMissingParam) {
