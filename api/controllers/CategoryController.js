@@ -33,14 +33,26 @@ const CategoryController = () => {
         order: [
           ['id', 'DESC'],
         ],
+        include: [
+          {
+            model: Category,
+            include: [
+              {
+                model: Category,
+              },
+            ],
+          },
+        ],
       };
       if (type) {
         query = {
           where: {
             type,
           },
-          order: [
-            ['id', 'DESC'],
+          include: [
+            {
+              model: Category,
+            },
           ],
         };
       }
