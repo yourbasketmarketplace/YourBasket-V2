@@ -24,7 +24,7 @@ const swaggerDefinition = {
     version: '1.0.0',
     description: 'Endpoints to test APIs',
   },
-  host: 'https://api.yourbasket.co.ke',
+  host: 'localhost:3000',
   basePath: '/',
   securityDefinitions: {
     bearerAuth: {
