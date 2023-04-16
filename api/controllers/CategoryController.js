@@ -52,6 +52,11 @@ const CategoryController = () => {
           include: [
             {
               model: Category,
+              include: [
+                {
+                  model: Category,
+                },
+              ],
             },
           ],
         };
