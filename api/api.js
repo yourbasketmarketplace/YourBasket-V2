@@ -13,6 +13,7 @@ const _ = require('lodash');
  * Swagger UI Configuration
  */
 if (process.env.NODE_ENV !== 'production') {
+  // eslint-disable-next-line global-require
   require('dotenv').config();
 }
 const swaggerJSDoc = require('swagger-jsdoc');
@@ -79,7 +80,7 @@ app.use(helmet({
 }));
 
 //define static folder
-app.use(express.static('public'))
+app.use(express.static('public'));
 
 // parsing the request bodys
 app.use(bodyParser.urlencoded({ extended: false }));
