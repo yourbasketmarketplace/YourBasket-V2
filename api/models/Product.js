@@ -29,7 +29,11 @@ const Product = sequelize.define('Product', {
     type: Sequelize.STRING,
     unique: true,
   },
-  qunatity: {
+  tag: {
+    type: Sequelize.STRING,
+    unique: true,
+  },
+  quantity: {
     type: Sequelize.INTEGER,
     unique: false,
   },
