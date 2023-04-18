@@ -11,8 +11,11 @@ exports.set_routes = (app) => {
   const products = require('../api/routes/product');
   // eslint-disable-next-line global-require
   const brands = require('../api/routes/brand');
+  // eslint-disable-next-line global-require
+  const blogs = require('../api/routes/blog');
   app.use('/api/users', users);
   app.use('/api/categories', categories);
   app.use('/api/products', products);
   app.use('/api/brands', brands);
+  app.use('/api/blog', blogs);
 };

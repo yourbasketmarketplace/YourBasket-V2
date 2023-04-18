@@ -4,13 +4,12 @@ const helperService = require('../services/helper.service');
 /** ****************************************************************************
  *                              Agency service Controller
  ***************************************************************************** */
-const ProductController = () => {
+const BlogController = () => {
   const create = async (req, res) => {
     // body is part of a form-data
-    const { Product } = AllModels();
+    const { Blog } = AllModels();
     try {
-      const reuireFiled = ['name', 'sku', 'cost_price', 'product_id', 'mrp'];
-
+      const reuireFiled = ['name'];
       const checkField = helperService.checkRequiredParameter(reuireFiled, req.body);
       if (checkField.isMissingParam) {
         return res.status(400).json({ msg: checkField.message });
@@ -19,16 +18,16 @@ const ProductController = () => {
         req.body.file_name = req.file.filename;
         req.body.file_path = req.file.path.replace('public/', '');
       }
-      const category = await Product.create(req.body);
+      const data = await Blog.create(req.body);
 
-      if (!category) {
+      if (!data) {
         return res.status(400).json({
           msg: 'Bad Request: Model not found',
         });
       }
 
       return res.status(200).json({
-        category,
+        data,
       });
     } catch (err) {
       return res.status(500).json({
@@ -39,14 +38,14 @@ const ProductController = () => {
 
   const getAll = async (req, res) => {
     try {
-      const { Product } = AllModels();
-      const categories = await Product.findAll({
+      const { Blog } = AllModels();
+      const data = await Blog.findAll({
         order: [
           ['id', 'DESC'],
         ],
       });
       return res.status(200).json({
-        categories,
+        data,
       });
     } catch (err) {
       return res.status(500).json({
@@ -58,22 +57,22 @@ const ProductController = () => {
   const get = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-    const { Product } = AllModels();
+    const { Blog } = AllModels();
     try {
-      const category = await Product.findOne({
+      const data = await Blog.findOne({
         where: {
           id,
         },
       });
 
-      if (!category) {
+      if (!data) {
         return res.status(400).json({
           msg: 'Bad Request: Model not found',
         });
       }
 
       return res.status(200).json({
-        category,
+        data,
       });
     } catch (err) {
       // better save it to log file
@@ -87,7 +86,7 @@ const ProductController = () => {
   const update = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-    const { Product } = AllModels();
+    const { Blog } = AllModels();
     // body is part of form-data
     const {
       body,
@@ -98,15 +97,15 @@ const ProductController = () => {
         req.body.file_name = req.file.filename;
         req.body.file_path = req.file.path.replace('public/', '');
       }
-      const category = await Product.findById(id);
+      const data = await Blog.findById(id);
 
-      if (!category) {
+      if (!data) {
         return res.status(400).json({
           msg: 'Bad Request: Model not found',
         });
       }
 
-      const updatedCategory = await category.update({
+      const updatedCategory = await data.update({
         body,
         where: {
           id,
@@ -128,17 +127,17 @@ const ProductController = () => {
   const destroy = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-    const { Product } = AllModels();
+    const { Blog } = AllModels();
     try {
-      const category = Product.findById(id);
+      const data = Blog.findById(id);
 
-      if (!category) {
+      if (!data) {
         return res.status(400).json({
           msg: 'Bad Request: Model not found',
         });
       }
 
-      await category.destroy();
+      await data.destroy();
 
       return res.status(200).json({
         msg: 'Successfully destroyed model',
@@ -160,4 +159,4 @@ const ProductController = () => {
   };
 };
 
-module.exports = ProductController;
+module.exports = BlogController;
