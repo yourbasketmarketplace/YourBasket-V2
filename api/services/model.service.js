@@ -3,6 +3,7 @@ const Category = require('../models/Category');
 const Product = require('../models/Product');
 const Brand = require('../models/Brand');
 const Blog = require('../models/Blog');
+const Page = require('../models/Page');
 
 const AllModels = () => ({
   User,
@@ -10,6 +11,7 @@ const AllModels = () => ({
   Product,
   Brand,
   Blog,
+  Page,
 });
 
 module.exports = AllModels;
