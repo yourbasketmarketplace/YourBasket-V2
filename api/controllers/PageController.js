@@ -124,18 +124,15 @@ const PageController = () => {
         });
       }
 
-      const data = await Page.update({
+      const data = await Page.update(
         body,
-        where: {
-          id,
-        },
-      });
+        { where: { id } },
+      );
 
       return res.status(200).json({
         data,
       });
     } catch (err) {
-      console.log(err)
       // better save it to log file
       return res.status(500).json({
         msg: 'Internal server error',
