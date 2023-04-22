@@ -112,7 +112,11 @@ const PageController = () => {
         req.body.file_name = req.file.filename;
         req.body.file_path = req.file.path.replace('public/', '');
       }
-      const page = await Page.findById(id);
+      const page = await Page.findOne({
+        where: {
+          id,
+        },
+      });
 
       if (!page) {
         return res.status(400).json({
@@ -131,7 +135,6 @@ const PageController = () => {
         data,
       });
     } catch (err) {
-      console.log(err)
       // better save it to log file
       return res.status(500).json({
         msg: 'Internal server error',
@@ -146,7 +149,11 @@ const PageController = () => {
     const { id } = req.params;
     const { Page } = AllModels();
     try {
-      const data = Page.findById(id);
+      const data = Page.findOne({
+        where: {
+          id,
+        },
+      });
 
       if (!data) {
         return res.status(400).json({
@@ -154,7 +161,7 @@ const PageController = () => {
         });
       }
 
-      await data.destroy();
+      await Page.destroy();
 
       return res.status(200).json({
         msg: 'Successfully destroyed model',

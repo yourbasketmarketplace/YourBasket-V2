@@ -98,7 +98,11 @@ const ProductController = () => {
         req.body.file_name = req.file.filename;
         req.body.file_path = req.file.path.replace('public/', '');
       }
-      const category = await Product.findById(id);
+      const category = await Product.findOne({
+        where: {
+          id,
+        },
+      });
 
       if (!category) {
         return res.status(400).json({
@@ -138,7 +142,7 @@ const ProductController = () => {
         });
       }
 
-      await category.destroy();
+      await Product.destroy();
 
       return res.status(200).json({
         msg: 'Successfully destroyed model',

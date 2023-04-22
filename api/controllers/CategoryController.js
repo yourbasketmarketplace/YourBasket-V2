@@ -118,7 +118,11 @@ const CategoryController = () => {
         req.body.file_name = req.file.filename;
         req.body.file_path = req.file.path.replace('public/', '');
       }
-      const category = await Category.findById(id);
+      const category = await Category.findOne({
+        where: {
+          id,
+        },
+      });
 
       if (!category) {
         return res.status(400).json({

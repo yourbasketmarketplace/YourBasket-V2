@@ -98,7 +98,11 @@ const BrandController = () => {
         req.body.file_name = req.file.filename;
         req.body.file_path = req.file.path.replace('public/', '');
       }
-      const brand = await Brand.findById(id);
+      const brand = await Brand.findOne({
+        where: {
+          id,
+        },
+      });
 
       if (!brand) {
         return res.status(400).json({

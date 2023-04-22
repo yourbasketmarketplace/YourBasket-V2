@@ -97,7 +97,11 @@ const BlogController = () => {
         req.body.file_name = req.file.filename;
         req.body.file_path = req.file.path.replace('public/', '');
       }
-      const data = await Blog.findById(id);
+      const data = await Blog.findOne({
+        where: {
+          id,
+        },
+      });
 
       if (!data) {
         return res.status(400).json({
@@ -137,7 +141,7 @@ const BlogController = () => {
         });
       }
 
-      await data.destroy();
+      await Blog.destroy();
 
       return res.status(200).json({
         msg: 'Successfully destroyed model',
