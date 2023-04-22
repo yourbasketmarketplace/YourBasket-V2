@@ -36,15 +36,28 @@ const PageController = () => {
       });
     }
   };
-
   const getAll = async (req, res) => {
     try {
+      // eslint-disable-next-line camelcase
+      const { page_type } = req.query;
       const { Page } = AllModels();
-      const data = await Page.findAll({
+      let query = {
         order: [
           ['id', 'DESC'],
         ],
-      });
+      };
+      // eslint-disable-next-line camelcase
+      if (page_type) {
+        query = {
+          where: {
+            page_type,
+          },
+          order: [
+            ['id', 'DESC'],
+          ],
+        };
+      }
+      const data = await Page.findAll(query);
       return res.status(200).json({
         data,
       });
@@ -54,6 +67,7 @@ const PageController = () => {
       });
     }
   };
+  
 
   const get = async (req, res) => {
     // params is part of an url
