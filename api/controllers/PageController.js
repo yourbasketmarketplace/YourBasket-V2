@@ -67,7 +67,7 @@ const PageController = () => {
       });
     }
   };
-  
+
 
   const get = async (req, res) => {
     // params is part of an url
@@ -134,6 +134,7 @@ const PageController = () => {
       // better save it to log file
       return res.status(500).json({
         msg: 'Internal server error',
+        err,
       });
     }
   };
