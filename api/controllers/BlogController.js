@@ -105,7 +105,7 @@ const BlogController = () => {
         });
       }
 
-      const updatedCategory = await data.update({
+      const updatedCategory = await Blog.update({
         body,
         where: {
           id,

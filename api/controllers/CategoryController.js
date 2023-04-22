@@ -126,7 +126,7 @@ const CategoryController = () => {
         });
       }
 
-      const updatedCategory = await category.update({
+      const updatedCategory = await Category.update({
         body,
         where: {
           id,

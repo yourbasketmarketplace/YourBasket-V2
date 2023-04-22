@@ -106,7 +106,7 @@ const ProductController = () => {
         });
       }
 
-      const updatedCategory = await category.update({
+      const updatedCategory = await Product.update({
         body,
         where: {
           id,

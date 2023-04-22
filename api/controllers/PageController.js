@@ -120,7 +120,7 @@ const PageController = () => {
         });
       }
 
-      const data = await page.update({
+      const data = await Page.update({
         body,
         where: {
           id,

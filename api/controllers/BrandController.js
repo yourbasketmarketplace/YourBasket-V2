@@ -106,7 +106,7 @@ const BrandController = () => {
         });
       }
 
-      const data = await brand.update({
+      const data = await Brand.update({
         body,
         where: {
           id,
