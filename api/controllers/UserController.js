@@ -55,7 +55,9 @@ const UserController = () => {
         user_name: body.user_name,
         phone: body.phone,
         role: 'user',
-        satus: 'active',
+        status: 'active',
+        file_name: req.body.file_name,
+        file_path: req.body.file_path,
       });
       return res.status(200).json({ user });
     } catch (err) {
@@ -78,7 +80,7 @@ const UserController = () => {
       }
       body.role = 'vendor';
       body.status = 'active';
-      const user = await User.create(body);
+      const user = await User.create(req.body);
       return res.status(200).json({ user });
     } catch (err) {
       return res.status(500).json({ msg: 'Internal server error' });
