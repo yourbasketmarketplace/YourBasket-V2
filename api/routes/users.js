@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const UserContoller = require('../controllers/UserController');
-
+const fileUpoload = require('../services/fileUpload.service');
+const auth = require('../policies/auth.policy');
 /**
  * @swagger
  * /api/users/authorize:
@@ -136,7 +137,7 @@ router.post('/register', (req, res) => UserContoller().register(req, res));
  *
  */
 
-router.post('/addcustomer', (req, res) => UserContoller().addCustomer(req, res));
+router.post('/addcustomer', auth, fileUpoload().signleUpload('image'), (req, res) => UserContoller().addCustomer(req, res));
 
 /**
  * @swagger
@@ -197,7 +198,7 @@ router.post('/addcustomer', (req, res) => UserContoller().addCustomer(req, res))
  *
  */
 
-router.post('/addvendor', (req, res) => UserContoller().addVendor(req, res));
+router.post('/addvendor', auth, fileUpoload().signleUpload('image'), (req, res) => UserContoller().addVendor(req, res));
 
 /**
  * @swagger
@@ -218,7 +219,7 @@ router.post('/addvendor', (req, res) => UserContoller().addVendor(req, res));
  *         description: Bad Request, not found in db
  *
  */
-router.get('/', (req, res) => UserContoller().getAll(req, res));
+router.get('/', auth, (req, res) => UserContoller().getAll(req, res));
 
 
 /**
@@ -259,7 +260,7 @@ router.get('/', (req, res) => UserContoller().getAll(req, res));
  *
  */
 
-router.put('/:id', (req, res) => UserContoller().update(req, res));
+router.put('/:id', auth, (req, res) => UserContoller().update(req, res));
 
 
 module.exports = router;
