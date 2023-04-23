@@ -1,11 +1,19 @@
 const AllModels = require('../services/model.service');
 const authService = require('../services/auth.service');
 const bcryptService = require('../services/bcrypt.service');
+const helperService = require('../services/helper.service');
+
 
 const UserController = () => {
   const register = async (req, res) => {
     const { body } = req;
     const { User } = AllModels();
+    const reuireFiled = ['email', 'password', 'first_name', 'last_name'];
+
+    const checkField = helperService.checkRequiredParameter(reuireFiled, req.body);
+    if (checkField.isMissingParam) {
+      return res.status(400).json({ msg: checkField.message });
+    }
     if (body.password === body.password2) {
       try {
         const user = await User.create({
@@ -13,6 +21,8 @@ const UserController = () => {
           password: body.password,
           first_name: body.first_name,
           last_name: body.last_name,
+          user_name: (body.user_name) ? body.user_name : body.email,
+          role: 'vendor',
         });
         const token = authService().issue({ id: user.id });
 
@@ -25,8 +35,48 @@ const UserController = () => {
     return res.status(400).json({ msg: 'Bad Request: Passwords don\'t match' });
   };
 
+  const addCustomer = async (req, res) => {
+    const { body } = req;
+    const { User } = AllModels();
+    const reuireFiled = ['email', 'password', 'user_name', 'phone'];
+
+    const checkField = helperService.checkRequiredParameter(reuireFiled, req.body);
+    if (checkField.isMissingParam) {
+      return res.status(400).json({ msg: checkField.message });
+    }
+    try {
+      const user = await User.create({
+        email: body.email,
+        password: body.password,
+        user_name: body.user_name,
+        phone: body.phone,
+        role: 'user',
+      });
+      return res.status(200).json({ user });
+    } catch (err) {
+      return res.status(500).json({ msg: 'Internal server error' });
+    }
+  };
+  const addVendor = async (req, res) => {
+    const { body } = req;
+    const { User } = AllModels();
+    const reuireFiled = ['email', 'first_name', 'last_name'];
+
+    const checkField = helperService.checkRequiredParameter(reuireFiled, req.body);
+    if (checkField.isMissingParam) {
+      return res.status(400).json({ msg: checkField.message });
+    }
+    try {
+      body.role = 'vendor';
+      const user = await User.create(body);
+      return res.status(200).json({ user });
+    } catch (err) {
+      return res.status(500).json({ msg: 'Internal server error' });
+    }
+  };
+
   const login = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
     const { User } = AllModels();
     if (email && password) {
       try {
@@ -34,6 +84,8 @@ const UserController = () => {
           .findOne({
             where: {
               email,
+              role,
+              status: 'active',
             },
           });
 
@@ -116,9 +168,25 @@ const UserController = () => {
   const getAll = async (req, res) => {
     try {
       const { User } = AllModels();
-      const users = await User.findAll();
-
-      return res.status(200).json({ users });
+      const { role } = req.query;
+      let query = {
+        order: [
+          ['id', 'DESC'],
+        ],
+      };
+      // eslint-disable-next-line camelcase
+      if (role) {
+        query = {
+          where: {
+            role,
+          },
+          order: [
+            ['id', 'DESC'],
+          ],
+        };
+      }
+      const data = await User.findAll(query);
+      return res.status(200).json({ data });
     } catch (err) {
       return res.status(500).json({ msg: 'Internal server error' });
     }
@@ -131,6 +199,8 @@ const UserController = () => {
     validate,
     getAll,
     update,
+    addCustomer,
+    addVendor,
   };
 };
 

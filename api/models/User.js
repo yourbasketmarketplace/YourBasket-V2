@@ -14,7 +14,10 @@ const tableName = 'users';
 const User = sequelize.define(
   'User',
   {
-
+    user_name: {
+      type: Sequelize.STRING,
+      unique: true,
+    },
     email: {
       type: Sequelize.STRING,
       unique: true,
@@ -28,13 +31,19 @@ const User = sequelize.define(
     last_name: {
       type: Sequelize.STRING,
     },
+    middle_name: {
+      type: Sequelize.STRING,
+    },
     phone: {
       type: Sequelize.STRING,
     },
     address: {
       type: Sequelize.STRING,
     },
-    suite: {
+    website_link: {
+      type: Sequelize.STRING,
+    },
+    state: {
       type: Sequelize.STRING,
     },
     city: {
