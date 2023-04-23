@@ -56,6 +56,12 @@ const User = sequelize.define(
       type: Sequelize.ENUM,
       values: ['admin', 'vendor', 'user'],
     },
+    file_name: {
+      type: Sequelize.STRING,
+    },
+    file_path: {
+      type: Sequelize.STRING,
+    },
     reset_password_token: {
       type: Sequelize.STRING,
     },

@@ -45,12 +45,17 @@ const UserController = () => {
       return res.status(400).json({ msg: checkField.message });
     }
     try {
+      if (req.file && req.file.filename) {
+        req.body.file_name = req.file.filename;
+        req.body.file_path = req.file.path.replace('public/', '');
+      }
       const user = await User.create({
         email: body.email,
         password: body.password,
         user_name: body.user_name,
         phone: body.phone,
         role: 'user',
+        satus: 'active',
       });
       return res.status(200).json({ user });
     } catch (err) {
@@ -67,7 +72,12 @@ const UserController = () => {
       return res.status(400).json({ msg: checkField.message });
     }
     try {
+      if (req.file && req.file.filename) {
+        req.body.file_name = req.file.filename;
+        req.body.file_path = req.file.path.replace('public/', '');
+      }
       body.role = 'vendor';
+      body.status = 'active';
       const user = await User.create(body);
       return res.status(200).json({ user });
     } catch (err) {
