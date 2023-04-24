@@ -56,6 +56,9 @@ const User = sequelize.define(
       type: Sequelize.ENUM,
       values: ['admin', 'vendor', 'user'],
     },
+    referral_name: {
+      type: Sequelize.STRING,
+    },
     file_name: {
       type: Sequelize.STRING,
     },
