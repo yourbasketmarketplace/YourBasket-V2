@@ -8,6 +8,7 @@ const BrandController = () => {
   const create = async (req, res) => {
     // body is part of a form-data
     const { Brand } = AllModels();
+    const userInfo = req.token;
     try {
       const reuireFiled = ['name'];
 
@@ -19,6 +20,7 @@ const BrandController = () => {
         req.body.file_name = req.file.filename;
         req.body.file_path = req.file.path.replace('public/', '');
       }
+      req.body.user_id = userInfo.id;
       const data = await Brand.create(req.body);
 
       if (!data) {
@@ -44,6 +46,7 @@ const BrandController = () => {
         order: [
           ['id', 'DESC'],
         ],
+
       });
       return res.status(200).json({
         data,

@@ -8,6 +8,7 @@ const ProductController = () => {
   const create = async (req, res) => {
     // body is part of a form-data
     const { Product } = AllModels();
+    const userInfo = req.token;
     try {
       const reuireFiled = ['name', 'sku', 'cost_price', 'product_id', 'mrp'];
 
@@ -19,6 +20,7 @@ const ProductController = () => {
         req.body.file_name = req.file.filename;
         req.body.file_path = req.file.path.replace('public/', '');
       }
+      req.body.user_id = userInfo.id;
       const category = await Product.create(req.body);
 
       if (!category) {
