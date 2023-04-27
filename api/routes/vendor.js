@@ -45,3 +45,5 @@ router.get('/products', auth, (req, res) => ProductContoller().getVendorProduct(
  */
 
 router.get('/brands', auth, (req, res) => BrandContoller().getVendorBrands(req, res));
+
+module.exports = router;
