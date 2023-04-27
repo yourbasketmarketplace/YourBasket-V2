@@ -1,16 +1,16 @@
 const router = require('express').Router();
-const ProductContoller = require('../controllers/ProductController');
+const BannerContoller = require('../controllers/BannerController');
 const fileUpoload = require('../services/fileUpload.service');
 const auth = require('../policies/auth.policy');
 
 /**
  * @swagger
- * /api/products:
+ * /api/banners:
  *   post:
  *     tags:
- *       - Products
- *     name: Create Poducts
- *     summary: Create New Product
+ *       - Banner
+ *     name: Create Banner
+ *     summary: Create New Banner
  *     security:
  *       - bearerAuth: []
  *     consumes:
@@ -20,48 +20,36 @@ const auth = require('../policies/auth.policy');
  *           name: image
  *           type: file
  *         - in: formData
- *           name: name
- *           type: string
- *         - in: formData
- *           name: product_id
+ *           name: title
  *           type: string
  *         - in: formData
  *           name: description
  *           type: string
  *         - in: formData
- *           name: sku
- *           type: string
+ *           name: from_date
+ *           type: date
  *         - in: formData
- *           name: quantity
- *           type: string
- *         - in: formData
- *           name: cost_price
- *           type: string
- *         - in: formData
- *           name: mrp_price
- *           type: string
- *         - in: formData
- *           name: offer_price
+ *           name: date
  *           type: string
  *     responses:
  *       200:
- *         description: Product Added
+ *         description: Banner Added
  *       401:
  *         description: Bad Request, not found in db
  *
  */
 
-router.post('/', auth, fileUpoload().signleUpload('image'), (req, res) => ProductContoller().create(req, res));
+router.post('/', auth, fileUpoload().signleUpload('image'), (req, res) => BannerContoller().create(req, res));
 
 
 /**
  * @swagger
- * /api/products:
+ * /api/banners:
  *   get:
  *     tags:
- *       - Products
- *     name: List Products
- *     summary: List All Products
+ *       - Banner
+ *     name: List Banner
+ *     summary: List All Banner
  *     security:
  *       - bearerAuth: []
  *     consumes:
@@ -74,16 +62,17 @@ router.post('/', auth, fileUpoload().signleUpload('image'), (req, res) => Produc
  *
  */
 
-router.get('/', (req, res) => ProductContoller().getAll(req, res));
+router.get('/', (req, res) => BannerContoller().getAll(req, res));
+
 
 /**
  * @swagger
- * /api/products/{id}:
+ * /api/banners/{id}:
  *   get:
  *     tags:
- *       - Products
- *     name: List One Products
- *     summary: List One Products with id
+ *       - Banner
+ *     name: List One Banner
+ *     summary: List One Banner with id
  *     security:
  *       - bearerAuth: []
  *     consumes:
@@ -102,7 +91,6 @@ router.get('/', (req, res) => ProductContoller().getAll(req, res));
  *
  */
 
-router.get('/:id', (req, res) => ProductContoller().get(req, res));
-
+router.get('/:id', (req, res) => BannerContoller().get(req, res));
 
 module.exports = router;

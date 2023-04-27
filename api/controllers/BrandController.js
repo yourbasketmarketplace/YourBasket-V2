@@ -57,6 +57,28 @@ const BrandController = () => {
       });
     }
   };
+  const getVendorBrands = async (req, res) => {
+    try {
+      const { Brand } = AllModels();
+      const userInfo = req.token;
+      const data = await Brand.findAll({
+        where: {
+          user_id: userInfo.id,
+        },
+        order: [
+          ['id', 'DESC'],
+        ],
+
+      });
+      return res.status(200).json({
+        data,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        msg: 'Internal server error',
+      });
+    }
+  };
 
   const get = async (req, res) => {
     // params is part of an url
@@ -164,6 +186,7 @@ const BrandController = () => {
     get,
     update,
     destroy,
+    getVendorBrands,
   };
 };
 

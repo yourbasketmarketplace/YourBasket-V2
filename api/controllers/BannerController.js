@@ -4,13 +4,13 @@ const helperService = require('../services/helper.service');
 /** ****************************************************************************
  *                              Agency service Controller
  ***************************************************************************** */
-const ProductController = () => {
+const BannerController = () => {
   const create = async (req, res) => {
     // body is part of a form-data
-    const { Product } = AllModels();
+    const { Banner } = AllModels();
     const userInfo = req.token;
     try {
-      const reuireFiled = ['name', 'sku', 'cost_price', 'product_id', 'mrp'];
+      const reuireFiled = ['title'];
 
       const checkField = helperService.checkRequiredParameter(reuireFiled, req.body);
       if (checkField.isMissingParam) {
@@ -21,16 +21,16 @@ const ProductController = () => {
         req.body.file_path = req.file.path.replace('public/', '');
       }
       req.body.user_id = userInfo.id;
-      const category = await Product.create(req.body);
+      const data = await Banner.create(req.body);
 
-      if (!category) {
+      if (!data) {
         return res.status(400).json({
           msg: 'Bad Request: Model not found',
         });
       }
 
       return res.status(200).json({
-        category,
+        data,
       });
     } catch (err) {
       return res.status(500).json({
@@ -41,36 +41,15 @@ const ProductController = () => {
 
   const getAll = async (req, res) => {
     try {
-      const { Product } = AllModels();
-      const categories = await Product.findAll({
+      const { Banner } = AllModels();
+      const data = await Banner.findAll({
         order: [
           ['id', 'DESC'],
         ],
-      });
-      return res.status(200).json({
-        categories,
-      });
-    } catch (err) {
-      return res.status(500).json({
-        msg: 'Internal server error',
-      });
-    }
-  };
 
-  const getVendorProduct = async (req, res) => {
-    try {
-      const { Product } = AllModels();
-      const userInfo = req.token;
-      const categories = await Product.findAll({
-        where: {
-          user_id: userInfo.id,
-        },
-        order: [
-          ['id', 'DESC'],
-        ],
       });
       return res.status(200).json({
-        categories,
+        data,
       });
     } catch (err) {
       return res.status(500).json({
@@ -82,22 +61,22 @@ const ProductController = () => {
   const get = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-    const { Product } = AllModels();
+    const { Banner } = AllModels();
     try {
-      const category = await Product.findOne({
+      const data = await Banner.findOne({
         where: {
           id,
         },
       });
 
-      if (!category) {
+      if (!data) {
         return res.status(400).json({
           msg: 'Bad Request: Model not found',
         });
       }
 
       return res.status(200).json({
-        category,
+        data,
       });
     } catch (err) {
       // better save it to log file
@@ -111,7 +90,7 @@ const ProductController = () => {
   const update = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-    const { Product } = AllModels();
+    const { Banner } = AllModels();
     // body is part of form-data
     const {
       body,
@@ -122,19 +101,19 @@ const ProductController = () => {
         req.body.file_name = req.file.filename;
         req.body.file_path = req.file.path.replace('public/', '');
       }
-      const category = await Product.findOne({
+      const brand = await Banner.findOne({
         where: {
           id,
         },
       });
 
-      if (!category) {
+      if (!brand) {
         return res.status(400).json({
           msg: 'Bad Request: Model not found',
         });
       }
 
-      const updatedCategory = await Product.update({
+      const data = await Banner.update({
         body,
         where: {
           id,
@@ -142,7 +121,7 @@ const ProductController = () => {
       });
 
       return res.status(200).json({
-        updatedCategory,
+        data,
       });
     } catch (err) {
       // better save it to log file
@@ -156,17 +135,17 @@ const ProductController = () => {
   const destroy = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-    const { Product } = AllModels();
+    const { Banner } = AllModels();
     try {
-      const category = Product.findById(id);
+      const data = Banner.findById(id);
 
-      if (!category) {
+      if (!data) {
         return res.status(400).json({
           msg: 'Bad Request: Model not found',
         });
       }
 
-      await Product.destroy();
+      await data.destroy();
 
       return res.status(200).json({
         msg: 'Successfully destroyed model',
@@ -185,8 +164,7 @@ const ProductController = () => {
     get,
     update,
     destroy,
-    getVendorProduct,
   };
 };
 
-module.exports = ProductController;
+module.exports = BannerController;
