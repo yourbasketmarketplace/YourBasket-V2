@@ -123,32 +123,33 @@ const ProductController = () => {
         req.body.file_name = req.file.filename;
         req.body.file_path = req.file.path.replace('public/', '');
       }
-      const category = await Product.findOne({
+      const data = await Product.findOne({
         where: {
           id,
           user_id: userInfo.id,
         },
       });
 
-      if (!category) {
+      if (!data) {
         return res.status(400).json({
           msg: 'Bad Request: Model not found',
         });
       }
 
-      const updatedCategory = await Product.update({
+      const updated = await Product.update(
         body,
-        where: {
-          id,
-          user_id: userInfo.id,
+        {
+          where: {
+            id,
+            user_id: userInfo.id,
+          },
         },
-      });
+      );
 
       return res.status(200).json({
-        updatedCategory,
+        updated,
       });
     } catch (err) {
-      console.log(err)
       // better save it to log file
       return res.status(500).json({
         msg: 'Internal server error',
