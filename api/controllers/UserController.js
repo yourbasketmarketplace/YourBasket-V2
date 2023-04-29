@@ -136,7 +136,7 @@ const UserController = () => {
     const { User } = AllModels();
     if (id) {
       try {
-        if (userInfo.id === id) {
+        if (userInfo.id == id) {
           const user = await User.findOne({
             where: {
               id,
