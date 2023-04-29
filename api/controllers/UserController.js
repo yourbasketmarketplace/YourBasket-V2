@@ -204,6 +204,22 @@ const UserController = () => {
     }
   };
 
+  const myprofile = async (req, res) => {
+    try {
+      const { User } = AllModels();
+      const userInfo = req.token;
+      const query = {
+        where: {
+          id: userInfo.id,
+        },
+      };
+      const data = await User.findOne(query);
+      return res.status(200).json({ data });
+    } catch (err) {
+      return res.status(500).json({ msg: 'Internal server error' });
+    }
+  };
+
 
   return {
     register,
@@ -213,6 +229,7 @@ const UserController = () => {
     update,
     addCustomer,
     addVendor,
+    myprofile,
   };
 };
 

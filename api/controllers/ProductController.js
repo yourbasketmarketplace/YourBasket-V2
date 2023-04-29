@@ -112,6 +112,7 @@ const ProductController = () => {
     // params is part of an url
     const { id } = req.params;
     const { Product } = AllModels();
+    const userInfo = req.token;
     // body is part of form-data
     const {
       body,
@@ -125,6 +126,7 @@ const ProductController = () => {
       const category = await Product.findOne({
         where: {
           id,
+          user_id: userInfo.id,
         },
       });
 
@@ -138,6 +140,7 @@ const ProductController = () => {
         body,
         where: {
           id,
+          user_id: userInfo.id,
         },
       });
 

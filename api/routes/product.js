@@ -104,5 +104,55 @@ router.get('/', (req, res) => ProductContoller().getAll(req, res));
 
 router.get('/:id', (req, res) => ProductContoller().get(req, res));
 
+/**
+ * @swagger
+ * /api/products:
+ *   post:
+ *     tags:
+ *       - Products
+ *     name: Create Poducts
+ *     summary: Create New Product
+ *     security:
+ *       - bearerAuth: []
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *         - in: formData
+ *           name: image
+ *           type: file
+ *         - in: formData
+ *           name: name
+ *           type: string
+ *         - in: formData
+ *           name: product_id
+ *           type: string
+ *         - in: formData
+ *           name: description
+ *           type: string
+ *         - in: formData
+ *           name: sku
+ *           type: string
+ *         - in: formData
+ *           name: quantity
+ *           type: string
+ *         - in: formData
+ *           name: cost_price
+ *           type: string
+ *         - in: formData
+ *           name: mrp_price
+ *           type: string
+ *         - in: formData
+ *           name: offer_price
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Product Added
+ *       401:
+ *         description: Bad Request, not found in db
+ *
+ */
+
+router.put('/', auth, fileUpoload().signleUpload('image'), (req, res) => ProductContoller().update(req, res));
+
 
 module.exports = router;

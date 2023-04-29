@@ -221,7 +221,26 @@ router.post('/addvendor', auth, fileUpoload().signleUpload('image'), (req, res) 
  */
 router.get('/', auth, (req, res) => UserContoller().getAll(req, res));
 
-
+/**
+ * @swagger
+ * /api/users/:id:
+ *   get:
+ *     tags:
+ *       - User detail
+ *     name: User detail
+ *     summary: User detail
+ *     security:
+ *       - bearerAuth: []
+ *     consumes:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Action successful
+ *       401:
+ *         description: Bad Request, not found in db
+ *
+ */
+router.get('/detail', auth, (req, res) => UserContoller().myprofile(req, res));
 /**
  * @swagger
  * /api/users/{id}:
