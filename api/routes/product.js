@@ -110,8 +110,8 @@ router.get('/:id', (req, res) => ProductContoller().get(req, res));
  *   post:
  *     tags:
  *       - Products
- *     name: Create Poducts
- *     summary: Create New Product
+ *     name: Update Poducts
+ *     summary: Update Product
  *     security:
  *       - bearerAuth: []
  *     consumes:
@@ -152,7 +152,7 @@ router.get('/:id', (req, res) => ProductContoller().get(req, res));
  *
  */
 
-router.put('/', auth, fileUpoload().signleUpload('image'), (req, res) => ProductContoller().update(req, res));
+router.put('/:id', auth, fileUpoload().signleUpload('image'), (req, res) => ProductContoller().update(req, res));
 
 
 module.exports = router;
