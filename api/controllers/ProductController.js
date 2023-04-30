@@ -181,7 +181,6 @@ const ProductController = () => {
         {
           where: {
             id,
-            user_id: userInfo.id,
           },
         },
       );
