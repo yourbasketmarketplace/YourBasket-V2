@@ -59,10 +59,15 @@ const Product = sequelize.define('Product', {
     type: Sequelize.TEXT,
     unique: false,
   },
+  best_deal: {
+    type: Sequelize.ENUM,
+    values: ['Yes', 'No'],
+    defaultValue: 'No',
+  },
   status: {
     type: Sequelize.ENUM,
-    values: ['active', 'inactive'],
-    defaultValue: 'active',
+    values: ['Pending', 'Published', 'Rejected', 'active', 'inactive'],
+    defaultValue: 'Pending',
   },
 }, {
   tableName,
