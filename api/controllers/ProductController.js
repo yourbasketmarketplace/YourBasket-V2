@@ -82,7 +82,7 @@ const ProductController = () => {
   const get = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-    const { Product, Category } = AllModels();
+    const { Product, Category, Brand } = AllModels();
     try {
       const category = await Product.findOne({
         where: {
@@ -91,6 +91,18 @@ const ProductController = () => {
         include: [
           {
             model: Category,
+            as: 'mastercategory',
+          },
+          {
+            model: Category,
+            as: 'category',
+          },
+          {
+            model: Category,
+            as: 'subcategory',
+          },
+          {
+            model: Brand,
           },
         ],
       });
@@ -116,7 +128,7 @@ const ProductController = () => {
   const update = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-    const { Product } = AllModels();
+    const { Product, User } = AllModels();
     const userInfo = req.token;
     // body is part of form-data
     const {
@@ -139,13 +151,25 @@ const ProductController = () => {
         });
         req.body.images = JSON.stringify(thumbimageData);
       }
-      const data = await Product.findOne({
+      const userData = await User.findOne({
+        where: {
+          id: userInfo.id,
+        },
+      });
+      let query = {
         where: {
           id,
           user_id: userInfo.id,
         },
-      });
-
+      };
+      if (userData.role === 'admin') {
+        query = {
+          where: {
+            id,
+          },
+        };
+      }
+      const data = await Product.findOne(query);
       if (!data) {
         return res.status(400).json({
           msg: 'Bad Request: Model not found',
@@ -166,7 +190,7 @@ const ProductController = () => {
         updated,
       });
     } catch (err) {
-      console.log(err)
+      console.log(err);
       // better save it to log file
       return res.status(500).json({
         msg: 'Internal server error',

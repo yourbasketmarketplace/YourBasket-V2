@@ -20,9 +20,9 @@ const dbService = (environment, migrate) => {
     } = AllModels();
     Category.hasMany(Category, { foreignKey: 'parent_id', sourceKey: 'id' });
     Product.belongsTo(User, { foreignKey: 'user_id', targetKey: 'id' });
-    Product.belongsTo(Category, { foreignKey: 'master_category_id', targetKey: 'id' });
-    Product.belongsTo(Category, { foreignKey: 'category_id', targetKey: 'id' });
-    Product.belongsTo(Category, { foreignKey: 'sub_category_id', targetKey: 'id' });
+    Product.belongsTo(Category, { foreignKey: 'master_category_id', as: 'mastercategory', targetKey: 'id' });
+    Product.belongsTo(Category, { foreignKey: 'category_id', as: 'category', targetKey: 'id' });
+    Product.belongsTo(Category, { foreignKey: 'sub_category_id', as: 'subcategory', targetKey: 'id' });
     Product.belongsTo(Brand, { foreignKey: 'brand_id', targetKey: 'id' });
     Brand.belongsTo(User, { foreignKey: 'user_id', targetKey: 'id' });
     Banner.belongsTo(User, { foreignKey: 'user_id', targetKey: 'id' });
