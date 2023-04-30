@@ -82,12 +82,17 @@ const ProductController = () => {
   const get = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-    const { Product } = AllModels();
+    const { Product, Category } = AllModels();
     try {
       const category = await Product.findOne({
         where: {
           id,
         },
+        include: [
+          {
+            model: Category,
+          },
+        ],
       });
 
       if (!category) {
