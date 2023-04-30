@@ -135,12 +135,14 @@ const BrandController = () => {
         });
       }
 
-      const data = await Brand.update({
+      const data = await Brand.update(
         body,
-        where: {
-          id,
+        {
+          where: {
+            id,
+          },
         },
-      });
+      );
 
       return res.status(200).json({
         data,

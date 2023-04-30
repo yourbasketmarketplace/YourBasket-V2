@@ -21,8 +21,8 @@ const Brand = sequelize.define('Brand', {
   },
   status: {
     type: Sequelize.ENUM,
-    values: ['active', 'inactive'],
-    defaultValue: 'active',
+    values: ['Pending', 'Published', 'Rejected', 'active', 'inactive'],
+    defaultValue: 'Pending',
   },
 }, {
   tableName,

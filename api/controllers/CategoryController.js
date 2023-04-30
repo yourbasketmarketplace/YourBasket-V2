@@ -130,12 +130,14 @@ const CategoryController = () => {
         });
       }
 
-      const updatedCategory = await Category.update({
+      const updatedCategory = await Category.update(
         body,
-        where: {
-          id,
+        {
+          where: {
+            id,
+          },
         },
-      });
+      );
 
       return res.status(200).json({
         updatedCategory,

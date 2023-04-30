@@ -87,4 +87,37 @@ router.get('/', (req, res) => BrandContoller().getAll(req, res));
 
 router.get('/:id', (req, res) => BrandContoller().get(req, res));
 
+/**
+ * @swagger
+ * /api/brands:
+ *   post:
+ *     tags:
+ *       - Brand
+ *     name: Update Brand
+ *     summary: Update Brand
+ *     security:
+ *       - bearerAuth: []
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *         - in: formData
+ *           name: image
+ *           type: file
+ *         - in: formData
+ *           name: name
+ *           type: string
+ *         - in: formData
+ *           name: description
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Brand Added
+ *       401:
+ *         description: Bad Request, not found in db
+ *
+ */
+
+router.put('/:id', auth, fileUpoload().signleUpload('image'), (req, res) => BrandContoller().update(req, res));
+
+
 module.exports = router;

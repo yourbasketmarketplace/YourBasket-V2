@@ -275,7 +275,7 @@ router.get('/detail', auth, (req, res) => UserContoller().myprofile(req, res));
  *       200:
  *         description: Update successful
  *       401:
- *         description: Bad Request, not found in db
+ *         description: Bad Request, ot found in db
  *
  */
 
