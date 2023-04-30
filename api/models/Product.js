@@ -55,6 +55,10 @@ const Product = sequelize.define('Product', {
   file_path: {
     type: Sequelize.STRING,
   },
+  images: {
+    type: Sequelize.TEXT,
+    unique: false,
+  },
   status: {
     type: Sequelize.ENUM,
     values: ['active', 'inactive'],

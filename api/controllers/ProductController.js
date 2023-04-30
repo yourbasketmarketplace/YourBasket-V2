@@ -123,6 +123,17 @@ const ProductController = () => {
         req.body.file_name = req.file.filename;
         req.body.file_path = req.file.path.replace('public/', '');
       }
+
+      if (req.files && req.files.length > 0) {
+        const thumbimageData = [];
+        req.files.forEach((element) => {
+          const thumbimage = {};
+          thumbimage.file_name = element.filename;
+          thumbimage.file_path = element.path.replace('public/', '');
+          thumbimageData.push(thumbimage);
+        });
+        req.body.images = JSON.stringify(thumbimageData);
+      }
       const data = await Product.findOne({
         where: {
           id,
@@ -150,6 +161,7 @@ const ProductController = () => {
         updated,
       });
     } catch (err) {
+      console.log(err)
       // better save it to log file
       return res.status(500).json({
         msg: 'Internal server error',
