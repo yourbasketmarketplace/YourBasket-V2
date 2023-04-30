@@ -152,7 +152,7 @@ router.get('/:id', (req, res) => ProductContoller().get(req, res));
  *
  */
 
-router.put('/:id', auth, fileUpoload().signleUpload('image'), fileUpoload().multipleUpload('thumbimage'), (req, res) => ProductContoller().update(req, res));
+router.put('/:id', auth, fileUpoload().signleUpload('image'), (req, res) => ProductContoller().update(req, res));
 
 
 module.exports = router;
