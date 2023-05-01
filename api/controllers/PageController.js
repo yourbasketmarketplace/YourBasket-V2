@@ -103,7 +103,6 @@ const PageController = () => {
     const { id } = req.params;
     const { Page } = AllModels();
     // body is part of form-data
-    console.log(req.body);
     try {
       if (req.file && req.file.filename) {
         req.body.file_name = req.file.filename;

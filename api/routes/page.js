@@ -123,7 +123,7 @@ router.get('/:id', (req, res) => PageContoller().get(req, res));
  *
  */
 
-router.put('/:id', (req, res) => PageContoller().update(req, res));
+router.put('/:id', auth, fileUpoload().signleUpload('image'), (req, res) => PageContoller().update(req, res));
 
 
 module.exports = router;
