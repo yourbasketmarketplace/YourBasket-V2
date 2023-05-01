@@ -2,6 +2,7 @@ const router = require('express').Router();
 const ProductContoller = require('../controllers/ProductController');
 const UserContoller = require('../controllers/UserController');
 const BrandContoller = require('../controllers/BrandController');
+const fileUpoload = require('../services/fileUpload.service');
 const auth = require('../policies/auth.policy');
 /**
  * @swagger
@@ -90,6 +91,6 @@ router.get('/userdetail/:id', auth, (req, res) => UserContoller().getUserDetail(
  *
  */
 
-router.put('/userdetail/:id', auth, (req, res) => UserContoller().updateUserDetail(req, res));
+router.put('/userdetail/:id', auth, fileUpoload().signleUpload('image'),(req, res) => UserContoller().updateUserDetail(req, res));
 
 module.exports = router;
