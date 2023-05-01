@@ -220,6 +220,61 @@ const UserController = () => {
     }
   };
 
+  const getUserDetail = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { User } = AllModels();
+      const userInfo = req.token;
+      if (userInfo.role === 'admin') {
+        const query = {
+          where: {
+            id,
+          },
+        };
+        const data = await User.findOne(query);
+        return res.status(200).json({ data });
+      }
+      return res.status(403).json({ msg: 'Not authorize to do this action!' });
+    } catch (err) {
+      return res.status(500).json({ msg: 'Internal server error' });
+    }
+  };
+  const updateUserDetail = async (req, res) => {
+    const { body } = req;
+    const { id } = req.params;
+    const userInfo = req.token;
+    const { User } = AllModels();
+    if (id) {
+      try {
+        if (userInfo.role === 'admin') {
+          const user = await User.findOne({
+            where: {
+              id,
+            },
+          });
+
+          if (!user) {
+            return res.status(400).json({ msg: 'User not found' });
+          }
+          const updated = await User.update(
+            body,
+            { where: { id } },
+          );
+
+          // eslint-disable-next-line no-throw-literal
+          if (!updated) throw 'Error while updating';
+
+          return res
+            .status(200)
+            .json({ success: true, msg: 'Profile updated successfully' });
+        }
+        return res.status(400).json({ msg: 'You are not authorized to access this page' });
+      } catch (err) {
+        return res.status(500).json({ msg: 'Internal server error' });
+      }
+    }
+    return res.status(400).json({ msg: 'You are not authorized to access this page' });
+  };
 
   return {
     register,
@@ -230,7 +285,10 @@ const UserController = () => {
     addCustomer,
     addVendor,
     myprofile,
+    getUserDetail,
+    updateUserDetail,
   };
 };
+
 
 module.exports = UserController;
