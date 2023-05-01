@@ -130,12 +130,15 @@ const UserController = () => {
  */
   // eslint-disable-next-line consistent-return
   const update = async (req, res) => {
-    const { body } = req;
     const { id } = req.params;
     const userInfo = req.token;
     const { User } = AllModels();
     if (id) {
       try {
+        if (req.file && req.file.filename) {
+          req.body.file_name = req.file.filename;
+          req.body.file_path = req.file.path.replace('public/', '');
+        }
         if (userInfo.id == id) {
           const user = await User.findOne({
             where: {
@@ -147,7 +150,7 @@ const UserController = () => {
             return res.status(400).json({ msg: 'User not found' });
           }
           const updated = await User.update(
-            body,
+            req.body,
             { where: { id } },
           );
 
@@ -240,11 +243,14 @@ const UserController = () => {
     }
   };
   const updateUserDetail = async (req, res) => {
-    const { body } = req;
     const { id } = req.params;
     const userInfo = req.token;
     const { User } = AllModels();
     if (id) {
+      if (req.file && req.file.filename) {
+        req.body.file_name = req.file.filename;
+        req.body.file_path = req.file.path.replace('public/', '');
+      }
       try {
         if (userInfo.role === 'admin') {
           const user = await User.findOne({
@@ -257,7 +263,7 @@ const UserController = () => {
             return res.status(400).json({ msg: 'User not found' });
           }
           const updated = await User.update(
-            body,
+            req.body,
             { where: { id } },
           );
 
