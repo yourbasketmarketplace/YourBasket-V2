@@ -31,7 +31,7 @@ const Product = sequelize.define('Product', {
   },
   tag: {
     type: Sequelize.STRING,
-    unique: true,
+    unique: false,
   },
   quantity: {
     type: Sequelize.INTEGER,

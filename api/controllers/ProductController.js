@@ -33,9 +33,9 @@ const ProductController = () => {
         category,
       });
     } catch (err) {
-      console.log(err)
+      console.log(err.errors);
       return res.status(500).json({
-        msg: err,
+        msg: err.errors[0].message,
       });
     }
   };
