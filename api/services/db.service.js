@@ -28,7 +28,7 @@ const dbService = (environment, migrate) => {
     Brand.belongsTo(User, { foreignKey: 'user_id', targetKey: 'id' });
     Banner.belongsTo(User, { foreignKey: 'user_id', targetKey: 'id' });
     Review.belongsTo(User, { foreignKey: 'user_id', targetKey: 'id' });
-    Review.belongsTo(User, { foreignKey: 'product_id', targetKey: 'id' });
+    Review.belongsTo(Product, { foreignKey: 'product_id', targetKey: 'id' });
     // eslint-disable-next-line no-console
     console.log('association....finish');
     return true;
