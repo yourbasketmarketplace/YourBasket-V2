@@ -5,6 +5,7 @@ const Brand = require('../models/Brand');
 const Blog = require('../models/Blog');
 const Page = require('../models/Page');
 const Banner = require('../models/Banner');
+const Review = require('../models/Review');
 
 const AllModels = () => ({
   User,
@@ -14,6 +15,7 @@ const AllModels = () => ({
   Blog,
   Page,
   Banner,
+  Review,
 });
 
 module.exports = AllModels;

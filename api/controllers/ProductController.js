@@ -33,7 +33,6 @@ const ProductController = () => {
         category,
       });
     } catch (err) {
-      console.log(err.errors);
       return res.status(500).json({
         msg: err.errors[0].message,
       });
@@ -83,7 +82,12 @@ const ProductController = () => {
   const get = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-    const { Product, Category, Brand } = AllModels();
+    const {
+      Product,
+      Category,
+      Brand,
+      User,
+    } = AllModels();
     try {
       const category = await Product.findOne({
         where: {
@@ -105,9 +109,21 @@ const ProductController = () => {
           {
             model: Brand,
           },
+          {
+            model: User,
+          },
         ],
       });
-
+      const relatedProducts = await Product.findAll({
+        where: {
+          category_id: category.category_id,
+        },
+      });
+      const Products = await Product.findAll({
+        where: {
+          status: 'Published',
+        },
+      });
       if (!category) {
         return res.status(400).json({
           msg: 'Bad Request: Model not found',
@@ -116,6 +132,8 @@ const ProductController = () => {
 
       return res.status(200).json({
         category,
+        relatedProducts,
+        Products,
       });
     } catch (err) {
       // better save it to log file

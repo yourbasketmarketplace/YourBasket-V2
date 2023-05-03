@@ -84,6 +84,16 @@ const CategoryController = () => {
         where: {
           id,
         },
+        include: [
+          {
+            model: Category,
+            include: [
+              {
+                model: Category,
+              },
+            ],
+          },
+        ],
       });
 
       if (!category) {

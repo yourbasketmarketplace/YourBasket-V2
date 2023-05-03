@@ -91,6 +91,6 @@ router.get('/userdetail/:id', auth, (req, res) => UserContoller().getUserDetail(
  *
  */
 
-router.put('/userdetail/:id', auth, fileUpoload().signleUpload('image'),(req, res) => UserContoller().updateUserDetail(req, res));
+router.put('/userdetail/:id', auth, fileUpoload().signleUpload('image'), (req, res) => UserContoller().updateUserDetail(req, res));
 
 module.exports = router;

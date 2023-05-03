@@ -59,6 +59,10 @@ const Product = sequelize.define('Product', {
     type: Sequelize.TEXT,
     unique: false,
   },
+  details: {
+    type: Sequelize.TEXT,
+    unique: false,
+  },
   best_deal: {
     type: Sequelize.ENUM,
     values: ['Yes', 'No'],
