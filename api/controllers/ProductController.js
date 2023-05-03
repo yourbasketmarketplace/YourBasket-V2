@@ -117,6 +117,7 @@ const ProductController = () => {
       const relatedProducts = await Product.findAll({
         where: {
           category_id: category.category_id,
+          status: 'Published',
         },
       });
       const Products = await Product.findAll({
