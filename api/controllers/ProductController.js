@@ -1,4 +1,5 @@
 // eslint-disable-next-line no-unused-vars
+const { Op } = require('sequelize');
 const AllModels = require('../services/model.service');
 const helperService = require('../services/helper.service');
 /** ****************************************************************************
@@ -117,12 +118,18 @@ const ProductController = () => {
       const relatedProducts = await Product.findAll({
         where: {
           category_id: category.category_id,
+          id: {
+            [Op.in]: category.id,
+          },
           status: 'Published',
         },
       });
       const Products = await Product.findAll({
         where: {
           status: 'Published',
+          id: {
+            [Op.in]: category.id,
+          },
         },
       });
       if (!category) {
@@ -137,7 +144,7 @@ const ProductController = () => {
         Products,
       });
     } catch (err) {
-      console.log(err)
+      console.log(err);
       // better save it to log file
       return res.status(500).json({
         msg: 'Internal server error',
