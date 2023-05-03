@@ -119,7 +119,7 @@ const ProductController = () => {
         where: {
           category_id: category.category_id,
           id: {
-            [Op.in]: category.id,
+            [Op.ne]: category.id,
           },
           status: 'Published',
         },
@@ -128,7 +128,7 @@ const ProductController = () => {
         where: {
           status: 'Published',
           id: {
-            [Op.in]: category.id,
+            [Op.ne]: category.id,
           },
         },
       });
