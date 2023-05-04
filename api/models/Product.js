@@ -41,6 +41,9 @@ const Product = sequelize.define('Product', {
     type: Sequelize.INTEGER,
     unique: false,
   },
+  variant: {
+    type: Sequelize.TEXT,
+  },
   mrp: {
     type: Sequelize.INTEGER,
     unique: false,
