@@ -83,6 +83,7 @@ const ProductController = () => {
   const get = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
+    const userInfo = req.token;
     const {
       Product,
       Category,
@@ -115,23 +116,30 @@ const ProductController = () => {
           },
         ],
       });
-      const relatedProducts = await Product.findAll({
-        where: {
-          category_id: category.category_id,
-          id: {
-            [Op.ne]: category.id,
+      let relatedProducts = [];
+      let Products = [];
+      if (userInfo && userInfo.role === 'admin') {
+        // continue
+      } else {
+        relatedProducts = await Product.findAll({
+          where: {
+            category_id: category.category_id,
+            id: {
+              [Op.ne]: category.id,
+            },
+            status: 'Published',
           },
-          status: 'Published',
-        },
-      });
-      const Products = await Product.findAll({
-        where: {
-          status: 'Published',
-          id: {
-            [Op.ne]: category.id,
+        });
+        Products = await Product.findAll({
+          where: {
+            status: 'Published',
+            id: {
+              [Op.ne]: category.id,
+            },
           },
-        },
-      });
+        });
+      }
+
       if (!category) {
         return res.status(400).json({
           msg: 'Bad Request: Model not found',
