@@ -6,8 +6,9 @@ const helperService = require('../services/helper.service');
  ***************************************************************************** */
 const ReviewController = () => {
   const create = async (req, res) => {
+    console.log(req.body)
     // body is part of a form-data
-    const { Banner } = AllModels();
+    const { Review } = AllModels();
     const userInfo = req.token;
     try {
       const reuireFiled = ['review'];
@@ -16,9 +17,11 @@ const ReviewController = () => {
       if (checkField.isMissingParam) {
         return res.status(400).json({ msg: checkField.message });
       }
-      if(userInfo && userInfo.id)
-      req.body.user_id = userInfo.id;
-      const data = await Banner.create(req.body);
+      if (userInfo && userInfo.id) {
+        req.body.user_id = userInfo.id;
+      }
+
+      const data = await Review.create(req.body);
 
       if (!data) {
         return res.status(400).json({
