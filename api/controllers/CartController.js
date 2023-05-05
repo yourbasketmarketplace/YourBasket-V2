@@ -41,7 +41,7 @@ const CartController = () => {
 
   const getAll = async (req, res) => {
     try {
-      const { Cart, Product } = AllModels();
+      const { Cart, Product, Brand } = AllModels();
       const { type } = req.query;
       const userInfo = req.token;
       const query = {
@@ -55,6 +55,11 @@ const CartController = () => {
         include: [
           {
             model: Product,
+            include: [
+              {
+                model: Brand,
+              },
+            ],
           },
         ],
       };
@@ -64,7 +69,7 @@ const CartController = () => {
         data,
       });
     } catch (err) {
-      console.log(err)
+      console.log(err);
       return res.status(500).json({
         msg: 'Internal server error',
       });
