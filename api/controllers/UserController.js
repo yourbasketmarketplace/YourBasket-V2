@@ -113,7 +113,7 @@ const UserController = () => {
           return res.status(200).json({ token, user });
         }
 
-        return res.status(401).json({ msg: 'Unauthorized' });
+        return res.status(403).json({ msg: 'Unauthorized' });
       } catch (err) {
         return res.status(500).json({ msg: 'Internal server error' });
       }
