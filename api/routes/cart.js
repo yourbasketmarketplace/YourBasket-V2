@@ -66,6 +66,6 @@ router.post('/', auth, (req, res) => CartContoller().create(req, res));
  *
  */
 
-router.get('/', (req, res) => CartContoller().getAll(req, res));
+router.get('/', auth, (req, res) => CartContoller().getAll(req, res));
 
 module.exports = router;
