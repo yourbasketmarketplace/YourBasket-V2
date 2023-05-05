@@ -89,6 +89,7 @@ const ProductController = () => {
       Category,
       Brand,
       User,
+      Review
     } = AllModels();
     try {
       const category = await Product.findOne({
@@ -118,6 +119,7 @@ const ProductController = () => {
       });
       let relatedProducts = [];
       let Products = [];
+      let reviews = [];
       if (userInfo && userInfo.role === 'admin') {
         // continue
       } else {
@@ -138,6 +140,12 @@ const ProductController = () => {
             },
           },
         });
+        reviews = await Review.findAll({
+          where: {
+            product_id: id,
+          },
+          group: ['email'],
+        });
       }
 
       if (!category) {
@@ -150,6 +158,7 @@ const ProductController = () => {
         category,
         relatedProducts,
         Products,
+        reviews,
       });
     } catch (err) {
       // better save it to log file
