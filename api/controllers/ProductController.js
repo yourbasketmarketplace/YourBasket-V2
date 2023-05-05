@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 const { Op } = require('sequelize');
+const sequelize = require('sequelize');
 const AllModels = require('../services/model.service');
 const helperService = require('../services/helper.service');
 /** ****************************************************************************
@@ -120,6 +121,8 @@ const ProductController = () => {
       let relatedProducts = [];
       let Products = [];
       let reviews = [];
+      let reviewsCount =[];
+
       if (userInfo && userInfo.role === 'admin') {
         // continue
       } else {
@@ -145,6 +148,14 @@ const ProductController = () => {
             product_id: id,
           },
           group: ['email'],
+          limit: 5,
+        });
+        reviewsCount = await Review.findAll({
+          attributes: [
+            'email',
+            [sequelize.fn('sum', sequelize.col('rating')), 'total_rating'],
+          ],
+          group: ['email'],
         });
       }
 
@@ -159,6 +170,7 @@ const ProductController = () => {
         relatedProducts,
         Products,
         reviews,
+        reviewsCount,
       });
     } catch (err) {
       // better save it to log file
