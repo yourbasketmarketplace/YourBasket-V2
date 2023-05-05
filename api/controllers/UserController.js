@@ -256,7 +256,7 @@ const UserController = () => {
       try {
         if (userInfo.role === 'admin') {
           if(req.body.password){
-            //req.body.password =bcryptService().password(req.body.password)
+            req.body.password =bcryptService().password({password:req.body.password})
           }
           const user = await User.findOne({
             where: {
