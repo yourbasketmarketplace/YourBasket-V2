@@ -43,10 +43,11 @@ const CartController = () => {
     try {
       const { Cart, Product } = AllModels();
       const { type } = req.query;
-
+      const userInfo = req.token;
       const query = {
         where: {
           type,
+          user_id: userInfo.id,
         },
         order: [
           ['id', 'DESC'],
