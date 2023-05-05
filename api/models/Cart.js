@@ -15,6 +15,10 @@ const Cart = sequelize.define('Cart', {
   product_title: {
     type: Sequelize.STRING,
   },
+  quantity: {
+    type: Sequelize.INTEGER,
+    unique: false,
+  },
   product_sku: {
     type: Sequelize.STRING,
     unique: false,

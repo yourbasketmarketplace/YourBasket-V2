@@ -27,6 +27,8 @@ const auth = require('../policies/auth.policy');
  *               type: number
  *             product_sku:
  *               type: string
+ *             quantity:
+ *               type: number
  *         required:
  *           - type
  *     responses:
