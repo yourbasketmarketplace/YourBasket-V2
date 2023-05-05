@@ -151,6 +151,9 @@ const ProductController = () => {
           limit: 5,
         });
         reviewsCount = await Review.findAll({
+          where: {
+            product_id: id,
+          },
           attributes: [
             'email',
             [sequelize.fn('sum', sequelize.col('rating')), 'total_rating'],
@@ -173,6 +176,7 @@ const ProductController = () => {
         reviewsCount,
       });
     } catch (err) {
+      console.log(err)
       // better save it to log file
       return res.status(500).json({
         msg: 'Internal server error',
