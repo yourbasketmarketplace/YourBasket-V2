@@ -4,13 +4,13 @@ const helperService = require('../services/helper.service');
 /** ****************************************************************************
  *                              Agency service Controller
  ***************************************************************************** */
-const BannerController = () => {
+const CartController = () => {
   const create = async (req, res) => {
     // body is part of a form-data
-    const { Banner } = AllModels();
+    const { Cart } = AllModels();
     const userInfo = req.token;
     try {
-      const reuireFiled = ['title'];
+      const reuireFiled = ['price', 'product_id', 'variant'];
 
       const checkField = helperService.checkRequiredParameter(reuireFiled, req.body);
       if (checkField.isMissingParam) {
@@ -21,7 +21,7 @@ const BannerController = () => {
         req.body.file_path = req.file.path.replace('public/', '');
       }
       req.body.user_id = userInfo.id;
-      const data = await Banner.create(req.body);
+      const data = await Cart.create(req.body);
 
       if (!data) {
         return res.status(400).json({
@@ -41,13 +41,24 @@ const BannerController = () => {
 
   const getAll = async (req, res) => {
     try {
-      const { Banner } = AllModels();
-      const data = await Banner.findAll({
+      const { Cart, Product } = AllModels();
+      const { type } = req.query;
+
+      const query = {
+        where: {
+          type,
+        },
         order: [
           ['id', 'DESC'],
         ],
+        include: [
+          {
+            model: Product,
+          },
+        ],
+      };
 
-      });
+      const data = await Cart.findAll(query);
       return res.status(200).json({
         data,
       });
@@ -61,12 +72,17 @@ const BannerController = () => {
   const get = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-    const { Banner } = AllModels();
+    const { Cart, Product } = AllModels();
     try {
-      const data = await Banner.findOne({
+      const data = await Cart.findOne({
         where: {
           id,
         },
+        include: [
+          {
+            model: Product,
+          },
+        ],
       });
 
       if (!data) {
@@ -90,7 +106,7 @@ const BannerController = () => {
   const update = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-    const { Banner } = AllModels();
+    const { Cart } = AllModels();
     // body is part of form-data
     const {
       body,
@@ -101,7 +117,7 @@ const BannerController = () => {
         req.body.file_name = req.file.filename;
         req.body.file_path = req.file.path.replace('public/', '');
       }
-      const brand = await Banner.findOne({
+      const brand = await Cart.findOne({
         where: {
           id,
         },
@@ -113,7 +129,7 @@ const BannerController = () => {
         });
       }
 
-      const data = await Banner.update(
+      const data = await Cart.update(
         body,
         {
           where: {
@@ -137,9 +153,9 @@ const BannerController = () => {
   const destroy = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-    const { Banner } = AllModels();
+    const { Cart } = AllModels();
     try {
-      const data = Banner.findById(id);
+      const data = Cart.findById(id);
 
       if (!data) {
         return res.status(400).json({
@@ -169,4 +185,4 @@ const BannerController = () => {
   };
 };
 
-module.exports = BannerController;
+module.exports = CartController;

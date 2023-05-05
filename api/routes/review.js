@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const ReviewContoller = require('../controllers/ReviewController');
-const auth = require('../policies/auth.policy');
 /**
  * @swagger
  * /api/review:
@@ -42,6 +41,6 @@ const auth = require('../policies/auth.policy');
  *
  */
 
-router.post('/', auth, (req, res) => ReviewContoller().create(req, res));
+router.post('/', (req, res) => ReviewContoller().create(req, res));
 
 module.exports = router;

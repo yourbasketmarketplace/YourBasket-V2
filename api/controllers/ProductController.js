@@ -90,7 +90,7 @@ const ProductController = () => {
       Category,
       Brand,
       User,
-      Review
+      Review,
     } = AllModels();
     try {
       const category = await Product.findOne({
@@ -121,7 +121,7 @@ const ProductController = () => {
       let relatedProducts = [];
       let Products = [];
       let reviews = [];
-      let reviewsCount =[];
+      let reviewsCount = [];
 
       if (userInfo && userInfo.role === 'admin') {
         // continue
@@ -176,7 +176,6 @@ const ProductController = () => {
         reviewsCount,
       });
     } catch (err) {
-      console.log(err)
       // better save it to log file
       return res.status(500).json({
         msg: 'Internal server error',
@@ -249,7 +248,6 @@ const ProductController = () => {
         updated,
       });
     } catch (err) {
-      console.log(err);
       // better save it to log file
       return res.status(500).json({
         msg: 'Internal server error',

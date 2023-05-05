@@ -18,6 +18,7 @@ const dbService = (environment, migrate) => {
       Brand,
       Banner,
       Review,
+      Cart,
     } = AllModels();
     Category.hasMany(Category, { foreignKey: 'parent_id', sourceKey: 'id' });
     Product.belongsTo(User, { foreignKey: 'user_id', targetKey: 'id' });
@@ -29,6 +30,8 @@ const dbService = (environment, migrate) => {
     Banner.belongsTo(User, { foreignKey: 'user_id', targetKey: 'id' });
     Review.belongsTo(User, { foreignKey: 'user_id', targetKey: 'id' });
     Review.belongsTo(Product, { foreignKey: 'product_id', targetKey: 'id' });
+    Cart.belongsTo(User, { foreignKey: 'user_id', targetKey: 'id' });
+    Cart.belongsTo(Product, { foreignKey: 'product_id', targetKey: 'id' });
     // eslint-disable-next-line no-console
     console.log('association....finish');
     return true;
