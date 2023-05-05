@@ -8,6 +8,7 @@ const hooks = {
     user.password = bcryptService().password(user); // eslint-disable-line no-param-reassign
   },
   beforeUpdate(user) {
+    console.log(user, 'user')
     if(user.password){
       user.password = bcryptService().password(user); // eslint-disable-line no-param-reassign
     }

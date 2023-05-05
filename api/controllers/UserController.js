@@ -145,7 +145,9 @@ const UserController = () => {
               id,
             },
           });
-
+          if(req.body.password){
+            req.body.password =bcryptService().password(req.body.password)
+          }
           if (!user) {
             return res.status(400).json({ msg: 'User not found' });
           }
