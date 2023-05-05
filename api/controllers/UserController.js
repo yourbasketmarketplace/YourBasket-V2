@@ -256,7 +256,7 @@ const UserController = () => {
       try {
         if (userInfo.role === 'admin') {
           if(req.body.password){
-            req.body.password =bcryptService().password(req.body.password)
+            //req.body.password =bcryptService().password(req.body.password)
           }
           const user = await User.findOne({
             where: {
@@ -281,6 +281,7 @@ const UserController = () => {
         }
         return res.status(400).json({ msg: 'You are not authorized to access this page' });
       } catch (err) {
+        console.log(err)
         return res.status(500).json({ msg: 'Internal server error' });
       }
     }
