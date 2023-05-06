@@ -14,6 +14,9 @@ const UserController = () => {
     if (checkField.isMissingParam) {
       return res.status(400).json({ msg: checkField.message });
     }
+    if (req.body.role === 'admin') {
+      return res.status(400).json({ msg: 'Bad Request: Passwords don\'t match' });
+    }
     if (body.password === body.password2) {
       try {
         const user = await User.create({
@@ -22,7 +25,8 @@ const UserController = () => {
           first_name: body.first_name,
           last_name: body.last_name,
           user_name: (body.user_name) ? body.user_name : body.email,
-          role: 'vendor',
+          role: body.role,
+          status: body.role === 'user' ? 'active' : 'pending',
         });
         const token = authService().issue({ id: user.id });
 
@@ -145,8 +149,8 @@ const UserController = () => {
               id,
             },
           });
-          if(req.body.password){
-            req.body.password =bcryptService().password(req.body.password)
+          if (req.body.password) {
+            req.body.password = bcryptService().password(req.body.password);
           }
           if (!user) {
             return res.status(400).json({ msg: 'User not found' });
@@ -255,8 +259,8 @@ const UserController = () => {
       }
       try {
         if (userInfo.role === 'admin') {
-          if(req.body.password){
-            req.body.password =bcryptService().password({password:req.body.password})
+          if (req.body.password) {
+            req.body.password = bcryptService().password({ password: req.body.password });
           }
           const user = await User.findOne({
             where: {
@@ -281,7 +285,7 @@ const UserController = () => {
         }
         return res.status(400).json({ msg: 'You are not authorized to access this page' });
       } catch (err) {
-        console.log(err)
+        console.log(err);
         return res.status(500).json({ msg: 'Internal server error' });
       }
     }
