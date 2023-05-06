@@ -111,6 +111,6 @@ router.get('/', auth, (req, res) => CartContoller().getAll(req, res));
  *
  */
 
-router.put('/', auth, (req, res) => CartContoller().update(req, res));
+router.put('/:id', auth, (req, res) => CartContoller().update(req, res));
 
 module.exports = router;
