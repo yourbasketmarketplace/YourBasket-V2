@@ -16,12 +16,29 @@ const CartController = () => {
       if (checkField.isMissingParam) {
         return res.status(400).json({ msg: checkField.message });
       }
-      if (req.file && req.file.filename) {
-        req.body.file_name = req.file.filename;
-        req.body.file_path = req.file.path.replace('public/', '');
-      }
       req.body.user_id = userInfo.id;
-      const data = await Cart.create(req.body);
+      const cartExist = await Cart.findOne({
+        where: {
+          user_id: userInfo.id,
+          product_id: req.body.product_id,
+          variant: req.body.variant,
+        },
+      });
+      let data;
+      if (cartExist) {
+        let { quantity } = cartExist;
+        quantity = req.body.quantity + quantity;
+        data = await Cart.update(
+          { quantity },
+          {
+            where: {
+              id: cartExist.id,
+            },
+          },
+        );
+      } else {
+        data = await Cart.create(req.body);
+      }
 
       if (!data) {
         return res.status(400).json({
@@ -34,7 +51,7 @@ const CartController = () => {
       });
     } catch (err) {
       return res.status(500).json({
-        msg: 'Internal server error',
+        msg: err,
       });
     }
   };
@@ -48,6 +65,7 @@ const CartController = () => {
         where: {
           type,
           user_id: userInfo.id,
+          status: 'active',
         },
         order: [
           ['id', 'DESC'],
