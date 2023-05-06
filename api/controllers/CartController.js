@@ -132,19 +132,16 @@ const CartController = () => {
     // params is part of an url
     const { id } = req.params;
     const { Cart } = AllModels();
+    const userInfo = req.token;
     // body is part of form-data
     const {
       body,
     } = req;
-
     try {
-      if (req.file && req.file.filename) {
-        req.body.file_name = req.file.filename;
-        req.body.file_path = req.file.path.replace('public/', '');
-      }
       const brand = await Cart.findOne({
         where: {
           id,
+          user_id: userInfo.id,
         },
       });
 
@@ -159,6 +156,7 @@ const CartController = () => {
         {
           where: {
             id,
+            user_id: userInfo.id,
           },
         },
       );
