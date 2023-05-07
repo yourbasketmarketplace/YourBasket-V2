@@ -23,6 +23,8 @@ exports.set_routes = (app) => {
   const review = require('../api/routes/review');
   // eslint-disable-next-line global-require
   const cart = require('../api/routes/cart');
+  // eslint-disable-next-line global-require
+  const address = require('../api/routes/address');
 
   app.use('/api/users', users);
   app.use('/api/categories', categories);
@@ -34,4 +36,5 @@ exports.set_routes = (app) => {
   app.use('/api/vendor', vendor);
   app.use('/api/review', review);
   app.use('/api/cart', cart);
+  app.use('/api/address', address);
 };

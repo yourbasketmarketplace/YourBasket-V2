@@ -27,6 +27,10 @@ const User = sequelize.define(
       type: Sequelize.STRING,
       unique: true,
     },
+    phone: {
+      type: Sequelize.STRING,
+      unique: true,
+    },
     password: {
       type: Sequelize.STRING,
     },
@@ -37,9 +41,6 @@ const User = sequelize.define(
       type: Sequelize.STRING,
     },
     middle_name: {
-      type: Sequelize.STRING,
-    },
-    phone: {
       type: Sequelize.STRING,
     },
     address: {
@@ -55,6 +56,9 @@ const User = sequelize.define(
       type: Sequelize.STRING,
     },
     zipcode: {
+      type: Sequelize.STRING,
+    },
+    otp: {
       type: Sequelize.STRING,
     },
     role: {

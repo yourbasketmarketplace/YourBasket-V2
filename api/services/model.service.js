@@ -7,6 +7,7 @@ const Page = require('../models/Page');
 const Banner = require('../models/Banner');
 const Review = require('../models/Review');
 const Cart = require('../models/Cart');
+const Address = require('../models/Address');
 
 const AllModels = () => ({
   User,
@@ -18,6 +19,7 @@ const AllModels = () => ({
   Banner,
   Review,
   Cart,
+  Address,
 });
 
 module.exports = AllModels;

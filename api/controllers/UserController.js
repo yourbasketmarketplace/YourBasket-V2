@@ -2,7 +2,13 @@ const AllModels = require('../services/model.service');
 const authService = require('../services/auth.service');
 const bcryptService = require('../services/bcrypt.service');
 const helperService = require('../services/helper.service');
+const AWS = require('aws-sdk');
 
+AWS.config.update({
+  region: 'us-east-1',
+  accessKeyId: 'AKIAWZDHY66FRJXCE5UK',
+  secretAccessKey: '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',
+});
 
 const UserController = () => {
   const register = async (req, res) => {
@@ -125,7 +131,55 @@ const UserController = () => {
 
     return res.status(400).json({ msg: 'Bad Request: Email or password is wrong' });
   };
+  /**
+ * @description: Forgot password
+ * @param {*} req
+ * @param {*} res
+ * @returns
+ */
+  const forgotPassword = async (req, res) => {
+    const { User } = AllModels();
+    const { body } = req;
+    const reuireFiled = ['phone'];
 
+    const checkField = helperService.checkRequiredParameter(reuireFiled, req.body);
+    if (checkField.isMissingParam) {
+      return res.status(400).json({ msg: checkField.message });
+    }
+    try {
+      const userInfo = await User.findOne({
+        where: {
+          phone: body.phone,
+        },
+      });
+      if (userInfo) {
+        const mobileNo = '+918264350533';
+        // eslint-disable-next-line no-mixed-operators
+        const OTP = Math.floor(Math.random() * ((1000 - 9999) + 9999));
+        const params = {
+          Message: `Welcome! your mobile verification code is: ${OTP}   Mobile Number is:8360047165`,
+          PhoneNumber: mobileNo,
+        };
+        await new AWS.SNS({ apiVersion: '2010-03-31' })
+          .publish(params).promise()
+          .then((data) => {
+            User.update(
+              {
+                otp: OTP,
+                token_expire_time: Date.now() + 3600000, // 1 hour,
+              },
+              { where: { id: userInfo.id } },
+            );
+            res.status(200).json({ msg: 'Successs', data });
+          })
+          .catch((err) => res.status(500).json({ msg: 'Oops something went wrong!' }));
+        // if email sent out create a record in invite table
+      }
+      return res.status(400).json({ msg: 'Invalid email address' });
+    } catch (error) {
+      return res.status(500).json({ msg: 'Oops something went wrong!' });
+    }
+  };
   /**
  * @description: update login user detail
  * @param {*} req
@@ -303,6 +357,7 @@ const UserController = () => {
     myprofile,
     getUserDetail,
     updateUserDetail,
+    forgotPassword,
   };
 };
 

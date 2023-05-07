@@ -281,5 +281,41 @@ router.get('/detail', auth, (req, res) => UserContoller().myprofile(req, res));
 
 router.put('/:id', auth, (req, res) => UserContoller().update(req, res));
 
+/**
+ * @swagger
+ * /api/users/forgotpassword:
+ *   post:
+ *     tags:
+ *       - Users
+ *     name: Forgotpassword
+ *     summary: Forgotpassword
+ *     security:
+ *       - bearerAuth: []
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - name: body
+ *         in: body
+ *         schema:
+ *           type: object
+ *           properties:
+ *             email:
+ *               type: string
+ *         required:
+ *           - email
+ *     responses:
+ *       200:
+ *         description: Invitation sent sucessfully!
+ *       401:
+ *         description: Bad Request, not found in db
+ *       500:
+ *         description: Server error , email not sent
+
+ *
+ */
+
+
+router.post('/forgotpassword', (req, res) => UserContoller().forgotPassword(req, res));
+
 
 module.exports = router;
