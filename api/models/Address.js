@@ -12,9 +12,6 @@ const Address = sequelize.define('Address', {
   last_name: {
     type: Sequelize.TEXT,
   },
-  product_title: {
-    type: Sequelize.STRING,
-  },
   gender: {
     type: Sequelize.STRING,
     unique: false,
@@ -34,11 +31,6 @@ const Address = sequelize.define('Address', {
   city: {
     type: Sequelize.STRING,
     unique: false,
-  },
-  type: {
-    type: Sequelize.ENUM,
-    values: ['cart', 'whislist'],
-    defaultValue: 'cart',
   },
   status: {
     type: Sequelize.ENUM,
