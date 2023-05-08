@@ -176,6 +176,7 @@ const ProductController = () => {
         reviewsCount,
       });
     } catch (err) {
+      console.log(err);
       // better save it to log file
       return res.status(500).json({
         msg: 'Internal server error',
