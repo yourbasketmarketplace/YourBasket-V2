@@ -18,7 +18,6 @@ const ProductController = () => {
       if (checkField.isMissingParam) {
         return res.status(400).json({ msg: checkField.message });
       }
-      console.log(req.files)
       if (req.files && req.files.length > 0) {
         const thumbimageData = [];
         req.files.forEach((element, index) => {
@@ -28,8 +27,8 @@ const ProductController = () => {
             thumbimage.file_path = element.path.replace('public/', '');
             thumbimageData.push(thumbimage);
           } else {
-            req.body.file_name = req.file.filename;
-            req.body.file_path = req.file.path.replace('public/', '');
+            req.body.file_name = element.filename;
+            req.body.file_path = element.path.replace('public/', '');
           }
         });
         if (thumbimageData.length) {
@@ -227,8 +226,8 @@ const ProductController = () => {
             thumbimage.file_path = element.path.replace('public/', '');
             thumbimageData.push(thumbimage);
           } else {
-            req.body.file_name = req.file.filename;
-            req.body.file_path = req.file.path.replace('public/', '');
+            req.body.file_name = element.filename;
+            req.body.file_path = element.path.replace('public/', '');
           }
         });
         if (thumbimageData.length) {
@@ -246,7 +245,6 @@ const ProductController = () => {
           user_id: userInfo.id,
         },
       };
-      console.log(userData);
       if (userData.role === 'admin') {
         query = {
           where: {
