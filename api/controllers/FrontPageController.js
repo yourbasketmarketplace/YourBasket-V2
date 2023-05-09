@@ -35,7 +35,7 @@ const ProductController = () => {
           status: {
             [Op.ne]: 'inactive',
           },
-          type: 1,
+          type: 0,
         },
         order: [
           ['id', 'DESC'],
