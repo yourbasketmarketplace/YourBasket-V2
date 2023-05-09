@@ -4,7 +4,7 @@ const sequelize = require('sequelize');
 const AllModels = require('../services/model.service');
 const helperService = require('../services/helper.service');
 /** ****************************************************************************
- *                              Agency service Controller
+ *                              Product  Controller
  ***************************************************************************** */
 const ProductController = () => {
   const create = async (req, res) => {
@@ -18,9 +18,22 @@ const ProductController = () => {
       if (checkField.isMissingParam) {
         return res.status(400).json({ msg: checkField.message });
       }
-      if (req.file && req.file.filename) {
-        req.body.file_name = req.file.filename;
-        req.body.file_path = req.file.path.replace('public/', '');
+      if (req.files && req.files.length > 0) {
+        const thumbimageData = [];
+        req.files.forEach((element, index) => {
+          if (index > 0) {
+            const thumbimage = {};
+            thumbimage.file_name = element.filename;
+            thumbimage.file_path = element.path.replace('public/', '');
+            thumbimageData.push(thumbimage);
+          } else {
+            req.body.file_name = req.file.filename;
+            req.body.file_path = req.file.path.replace('public/', '');
+          }
+        });
+        if (thumbimageData.length) {
+          req.body.images = JSON.stringify(thumbimageData);
+        }
       }
       req.body.user_id = userInfo.id;
       const category = await Product.create(req.body);
@@ -45,6 +58,11 @@ const ProductController = () => {
     try {
       const { Product } = AllModels();
       const categories = await Product.findAll({
+        where: {
+          status: {
+            [Op.ne]: 'inactive',
+          },
+        },
         order: [
           ['id', 'DESC'],
         ],
@@ -96,6 +114,9 @@ const ProductController = () => {
       const category = await Product.findOne({
         where: {
           id,
+          status: {
+            [Op.ne]: 'inactive',
+          },
         },
         include: [
           {
@@ -176,7 +197,6 @@ const ProductController = () => {
         reviewsCount,
       });
     } catch (err) {
-      console.log(err);
       // better save it to log file
       return res.status(500).json({
         msg: 'Internal server error',
@@ -196,20 +216,22 @@ const ProductController = () => {
     } = req;
 
     try {
-      if (req.file && req.file.filename) {
-        req.body.file_name = req.file.filename;
-        req.body.file_path = req.file.path.replace('public/', '');
-      }
-
       if (req.files && req.files.length > 0) {
         const thumbimageData = [];
-        req.files.forEach((element) => {
-          const thumbimage = {};
-          thumbimage.file_name = element.filename;
-          thumbimage.file_path = element.path.replace('public/', '');
-          thumbimageData.push(thumbimage);
+        req.files.forEach((element, index) => {
+          if (index > 0) {
+            const thumbimage = {};
+            thumbimage.file_name = element.filename;
+            thumbimage.file_path = element.path.replace('public/', '');
+            thumbimageData.push(thumbimage);
+          } else {
+            req.body.file_name = req.file.filename;
+            req.body.file_path = req.file.path.replace('public/', '');
+          }
         });
-        req.body.images = JSON.stringify(thumbimageData);
+        if (thumbimageData.length) {
+          req.body.images = JSON.stringify(thumbimageData);
+        }
       }
       const userData = await User.findOne({
         where: {
@@ -222,6 +244,7 @@ const ProductController = () => {
           user_id: userInfo.id,
         },
       };
+      console.log(userData);
       if (userData.role === 'admin') {
         query = {
           where: {

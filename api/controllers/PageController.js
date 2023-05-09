@@ -2,7 +2,7 @@
 const AllModels = require('../services/model.service');
 const helperService = require('../services/helper.service');
 /** ****************************************************************************
- *                              Agency service Controller
+ *                              Page Controller
  ***************************************************************************** */
 const PageController = () => {
   const create = async (req, res) => {

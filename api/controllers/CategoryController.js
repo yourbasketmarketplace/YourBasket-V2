@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const Category = require('../models/Category');
 
 const CategoryController = () => {
@@ -30,6 +31,11 @@ const CategoryController = () => {
     try {
       const { type } = req.query;
       let query = {
+        where: {
+          status: {
+            [Op.ne]: 'inactive',
+          },
+        },
         order: [
           ['id', 'DESC'],
         ],
@@ -48,6 +54,9 @@ const CategoryController = () => {
         query = {
           where: {
             type,
+            status: {
+              [Op.ne]: 'inactive',
+            },
           },
           include: [
             {

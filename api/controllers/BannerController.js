@@ -2,7 +2,7 @@
 const AllModels = require('../services/model.service');
 const helperService = require('../services/helper.service');
 /** ****************************************************************************
- *                              Agency service Controller
+ *                              Banner Controller
  ***************************************************************************** */
 const BannerController = () => {
   const create = async (req, res) => {

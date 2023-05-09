@@ -1,8 +1,10 @@
+const { Op } = require('sequelize');
 // eslint-disable-next-line no-unused-vars
 const AllModels = require('../services/model.service');
 const helperService = require('../services/helper.service');
+
 /** ****************************************************************************
- *                              Agency service Controller
+ *                              Abrand Controller
  ***************************************************************************** */
 const BrandController = () => {
   const create = async (req, res) => {
@@ -43,6 +45,11 @@ const BrandController = () => {
     try {
       const { Brand } = AllModels();
       const data = await Brand.findAll({
+        where: {
+          status: {
+            [Op.ne]: 'inactive',
+          },
+        },
         order: [
           ['id', 'DESC'],
         ],

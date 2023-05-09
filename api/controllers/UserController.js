@@ -172,6 +172,7 @@ const UserController = () => {
             );
             res.status(200).json({ msg: 'Successs', data });
           })
+          // eslint-disable-next-line no-unused-vars
           .catch((err) => res.status(500).json({ msg: 'Oops something went wrong!' }));
         // if email sent out create a record in invite table
       }
