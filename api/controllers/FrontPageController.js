@@ -19,6 +19,7 @@ const ProductController = () => {
         order: [
           ['id', 'DESC'],
         ],
+        limit: 10,
       });
       const brands = await Brand.findAll({
         where: {
@@ -27,7 +28,7 @@ const ProductController = () => {
         order: [
           ['id', 'DESC'],
         ],
-
+        limit: 5,
       });
       const categories = await Category.findAll({
         where: {
@@ -38,6 +39,7 @@ const ProductController = () => {
         order: [
           ['id', 'DESC'],
         ],
+        limit: 5,
       });
       return res.status(200).json({
         products,
@@ -45,7 +47,7 @@ const ProductController = () => {
         categories,
       });
     } catch (err) {
-      console.log(err)
+      console.log(err);
       return res.status(500).json({
         msg: 'Internal server error',
       });
