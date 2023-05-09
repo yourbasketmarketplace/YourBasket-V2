@@ -49,6 +49,16 @@ const ProductController = () => {
           },
           type: 0,
         },
+        include: [
+          {
+            model: Category,
+            include: [
+              {
+                model: Category,
+              },
+            ],
+          },
+        ],
         order: [
           ['id', 'DESC'],
         ],
