@@ -18,6 +18,7 @@ const ProductController = () => {
       if (checkField.isMissingParam) {
         return res.status(400).json({ msg: checkField.message });
       }
+      console.log(req.files)
       if (req.files && req.files.length > 0) {
         const thumbimageData = [];
         req.files.forEach((element, index) => {
@@ -48,6 +49,7 @@ const ProductController = () => {
         category,
       });
     } catch (err) {
+      console.log(err)
       return res.status(500).json({
         msg: err.errors[0].message,
       });
