@@ -133,33 +133,38 @@ const CategoryController = () => {
     } = req;
 
     try {
-      if (req.file && req.file.filename) {
-        req.body.file_name = req.file.filename;
-        req.body.file_path = req.file.path.replace('public/', '');
-      }
-      const category = await Category.findOne({
-        where: {
-          id,
-        },
-      });
-
-      if (!category) {
-        return res.status(400).json({
-          msg: 'Bad Request: Model not found',
-        });
-      }
-
-      const updatedCategory = await Category.update(
-        body,
-        {
+      if (userInfo && userInfo.role === 'admin') {
+        if (req.file && req.file.filename) {
+          req.body.file_name = req.file.filename;
+          req.body.file_path = req.file.path.replace('public/', '');
+        }
+        const category = await Category.findOne({
           where: {
             id,
           },
-        },
-      );
+        });
 
-      return res.status(200).json({
-        updatedCategory,
+        if (!category) {
+          return res.status(400).json({
+            msg: 'Bad Request: Model not found',
+          });
+        }
+
+        const updatedCategory = await Category.update(
+          body,
+          {
+            where: {
+              id,
+            },
+          },
+        );
+
+        return res.status(200).json({
+          updatedCategory,
+        });
+      }
+      return res.status(403).json({
+        msg: 'Action not allowed',
       });
     } catch (err) {
       // better save it to log file

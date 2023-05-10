@@ -121,7 +121,7 @@ router.get('/:id', (req, res) => CategoryContoller().get(req, res));
  *
  */
 
-router.put('/:id', auth, (req, res) => CategoryContoller().update(req, res));
+router.put('/:id', auth, fileUpoload().signleUpload('image'), (req, res) => CategoryContoller().update(req, res));
 
 
 /**
