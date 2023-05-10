@@ -126,7 +126,7 @@ const CategoryController = () => {
   const update = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-
+    const userInfo = req.token;
     // body is part of form-data
     const {
       body,
