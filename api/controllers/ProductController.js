@@ -201,7 +201,7 @@ const ProductController = () => {
       console.log(err)
       // better save it to log file
       return res.status(500).json({
-        msg: err.errors[0].message,
+        msg: err,
       });
     }
   };
