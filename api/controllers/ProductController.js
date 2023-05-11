@@ -85,6 +85,9 @@ const ProductController = () => {
       const categories = await Product.findAll({
         where: {
           user_id: userInfo.id,
+          status: {
+            [Op.ne]: 'inactive',
+          },
         },
         order: [
           ['id', 'DESC'],
