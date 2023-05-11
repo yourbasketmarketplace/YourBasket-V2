@@ -22,6 +22,7 @@ const dbService = (environment, migrate) => {
       Address,
     } = AllModels();
     Category.hasMany(Category, { foreignKey: 'parent_id', sourceKey: 'id' });
+    Category.belongsTo(Category, { foreignKey: 'parent_id', as: 'parentcategory', sourceKey: 'id' });
     Product.belongsTo(User, { foreignKey: 'user_id', targetKey: 'id' });
     Product.belongsTo(Category, { foreignKey: 'master_category_id', as: 'mastercategory', targetKey: 'id' });
     Product.belongsTo(Category, { foreignKey: 'category_id', as: 'category', targetKey: 'id' });
