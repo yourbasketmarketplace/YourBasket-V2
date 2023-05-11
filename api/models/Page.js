@@ -19,6 +19,10 @@ const Page = sequelize.define('Page', {
     type: Sequelize.TEXT,
     unique: false,
   },
+  description2: {
+    type: Sequelize.TEXT,
+    unique: false,
+  },
   page_type: {
     type: Sequelize.STRING,
     unique: false,
