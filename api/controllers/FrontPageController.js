@@ -20,6 +20,7 @@ const ProductController = () => {
           {
             model: Cart,
             seprate: true,
+            attribute: ['product_id'],
             where: {
               type: 'whislist',
               status: 'active',
