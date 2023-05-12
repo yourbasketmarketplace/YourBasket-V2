@@ -14,21 +14,26 @@ const ProductController = () => {
         Cart,
       } = AllModels();
       const { userId } = req.query;
-      const products = await Product.findAll({
-        where: {
-          status: 'Published',
-        },
-        include: [
+      let include = [];
+      if (userId) {
+        include = [
           {
             model: Cart,
             seprate: true,
             where: {
               type: 'whislist',
               status: 'active',
+              user_id: userId,
             },
             required: false,
           },
-        ],
+        ];
+      }
+      const products = await Product.findAll({
+        where: {
+          status: 'Published',
+        },
+        include,
         order: [
           ['id', 'DESC'],
         ],
