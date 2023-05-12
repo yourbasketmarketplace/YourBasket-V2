@@ -28,11 +28,22 @@ const ProductController = () => {
           },
         ];
       }
+      console.log(userInfo)
       const products = await Product.findAll({
         where: {
           status: 'Published',
         },
-        include,
+        include: [
+          {
+            model: Cart,
+            seprate: true,
+            where: {
+              type: 'whislist',
+              user_id: userInfo.id,
+            },
+            required: false,
+          },
+        ],
         order: [
           ['id', 'DESC'],
         ],
