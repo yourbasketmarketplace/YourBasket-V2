@@ -19,8 +19,12 @@ const ProductController = () => {
         include = [
           {
             model: Cart,
-            type: 'whislist',
-            user_id: userInfo.id,
+            seprate: true,
+            where: {
+              type: 'whislist',
+              user_id: userInfo.id,
+            },
+            required: false,
           },
         ];
       }
