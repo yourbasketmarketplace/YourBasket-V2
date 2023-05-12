@@ -10,7 +10,7 @@ const CartController = () => {
     const { Cart } = AllModels();
     const userInfo = req.token;
     try {
-      const reuireFiled = ['price', 'product_id', 'variant'];
+      const reuireFiled = ['price', 'product_id', 'quantity'];
 
       const checkField = helperService.checkRequiredParameter(reuireFiled, req.body);
       if (checkField.isMissingParam) {

@@ -11,11 +11,24 @@ const ProductController = () => {
         Product,
         Brand,
         Category,
+        Cart,
       } = AllModels();
+      const userInfo = req.token;
+      let include = [];
+      if (userInfo && userInfo.id) {
+        include = [
+          {
+            model: Cart,
+            type: 'whislist',
+            user_id: userInfo.id,
+          },
+        ];
+      }
       const products = await Product.findAll({
         where: {
           status: 'Published',
         },
+        include,
         order: [
           ['id', 'DESC'],
         ],
