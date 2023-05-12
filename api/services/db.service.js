@@ -35,6 +35,8 @@ const dbService = (environment, migrate) => {
     Cart.belongsTo(User, { foreignKey: 'user_id', targetKey: 'id' });
     Cart.belongsTo(Product, { foreignKey: 'product_id', targetKey: 'id' });
     Address.belongsTo(User, { foreignKey: 'user_id', targetKey: 'id' });
+    Product.hasMany(Cart, { foreignKey: 'product_id', sourceKey: 'id' });
+    User.hasMany(Cart, { foreignKey: 'user_id', sourceKey: 'id' });
     // eslint-disable-next-line no-console
     console.log('association....finish');
     return true;
