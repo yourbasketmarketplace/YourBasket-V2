@@ -13,22 +13,7 @@ const ProductController = () => {
         Category,
         Cart,
       } = AllModels();
-      const userInfo = req.token;
-      let include = [];
-      if (userInfo && userInfo.id) {
-        include = [
-          {
-            model: Cart,
-            seprate: true,
-            where: {
-              type: 'whislist',
-              user_id: userInfo.id,
-            },
-            required: false,
-          },
-        ];
-      }
-      console.log(userInfo)
+      const { userId } = req.query;
       const products = await Product.findAll({
         where: {
           status: 'Published',
@@ -39,7 +24,7 @@ const ProductController = () => {
             seprate: true,
             where: {
               type: 'whislist',
-              user_id: userInfo.id,
+              user_id: userId,
             },
             required: false,
           },
