@@ -24,7 +24,7 @@ const ProductController = () => {
             seprate: true,
             where: {
               type: 'whislist',
-              user_id: userId,
+              status: 'active',
             },
             required: false,
           },
