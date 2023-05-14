@@ -99,26 +99,24 @@ const ProductController = () => {
       Product,
     } = AllModels();
     try {
-      const query = {
-        status: 'Published',
-        $or: [],
-      };
+      const query = {};
+      const orArray = [];
       if (req.body.mastCatId.length) {
-        query.$or.push({
+        orArray.push({
           master_category_id: {
             [Op.in]: req.body.mastCatId,
           },
         });
       }
       if (req.body.catId.length) {
-        query.$or.push({
+        orArray.push({
           category_id: {
             [Op.in]: req.body.catId,
           },
         });
       }
       if (req.body.subCatId.length) {
-        query.$or.push({
+        orArray.push({
           sub_category_id: {
             [Op.in]: req.body.subCatId,
           },
@@ -140,7 +138,11 @@ const ProductController = () => {
         };
       }
       const products = await Product.findAll({
-        where: query,
+        where: {
+          status: 'Published',
+          query,
+          [Op.or]: orArray,
+        },
         order: [
           ['id', 'DESC'],
         ],
