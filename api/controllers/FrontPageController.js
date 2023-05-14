@@ -101,21 +101,28 @@ const ProductController = () => {
     try {
       const query = {
         status: 'Published',
+        $or: [],
       };
       if (req.body.mastCatId.length) {
-        query.master_category_id = {
-          [Op.in]: req.body.mastCatId,
-        };
+        query.$or.push({
+          master_category_id: {
+            [Op.in]: req.body.mastCatId,
+          },
+        });
       }
       if (req.body.catId.length) {
-        query.category_id = {
-          [Op.in]: req.body.catId,
-        };
+        query.$or.push({
+          category_id: {
+            [Op.in]: req.body.catId,
+          },
+        });
       }
-      if (req.body.catId.length) {
-        query.category_id = {
-          [Op.in]: req.body.catId,
-        };
+      if (req.body.subCatId.length) {
+        query.$or.push({
+          sub_category_id: {
+            [Op.in]: req.body.subCatId,
+          },
+        });
       }
       if (req.body.brandId.length) {
         query.brand_id = {
@@ -142,6 +149,7 @@ const ProductController = () => {
         products,
       });
     } catch (err) {
+      console.log(err)
       return res.status(500).json({
         msg: 'Internal server error',
       });
