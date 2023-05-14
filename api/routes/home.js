@@ -22,4 +22,6 @@ const FrontpageController = require('../controllers/FrontPageController');
 
 router.get('/', (req, res) => FrontpageController().getAll(req, res));
 
+router.post('/search', (req, res) => FrontpageController().searchProduct(req, res));
+
 module.exports = router;

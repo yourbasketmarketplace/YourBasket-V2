@@ -94,10 +94,63 @@ const ProductController = () => {
       });
     }
   };
-
+  const searchProduct = async (req, res) => {
+    const {
+      Product,
+    } = AllModels();
+    try {
+      const query = {
+        status: 'Published',
+      };
+      if (req.body.mastCatId.length) {
+        query.master_category_id = {
+          [Op.in]: req.body.mastCatId,
+        };
+      }
+      if (req.body.catId.length) {
+        query.category_id = {
+          [Op.in]: req.body.catId,
+        };
+      }
+      if (req.body.catId.length) {
+        query.category_id = {
+          [Op.in]: req.body.catId,
+        };
+      }
+      if (req.body.brandId.length) {
+        query.brand_id = {
+          [Op.in]: req.body.brandId,
+        };
+      }
+      if (req.body.minPrice) {
+        query.mrp = {
+          [Op.lte]: req.body.minPrice,
+        };
+      }
+      if (req.body.maxPrice) {
+        query.mrp = {
+          [Op.gte]: req.body.maxPrice,
+        };
+      }
+      const products = await Product.findAll({
+        where: query,
+        order: [
+          ['id', 'DESC'],
+        ],
+      });
+      return res.status(200).json({
+        products,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        msg: 'Internal server error',
+      });
+    }
+  };
 
   return {
     getAll,
+    searchProduct,
   };
 };
 
