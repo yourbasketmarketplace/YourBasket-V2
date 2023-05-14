@@ -99,7 +99,9 @@ const ProductController = () => {
       Product,
     } = AllModels();
     try {
-      const query = {};
+      let condition = {
+        status: 'Published',
+      };
       const orArray = [];
       if (req.body.mastCatId.length) {
         orArray.push({
@@ -122,27 +124,30 @@ const ProductController = () => {
           },
         });
       }
+      if (orArray.length) {
+        condition = {
+          status: 'Published',
+          [Op.or]: orArray,
+        };
+      }
       if (req.body.brandId.length) {
-        query.brand_id = {
+        condition.brand_id = {
           [Op.in]: req.body.brandId,
         };
       }
       if (req.body.minPrice) {
-        query.mrp = {
+        condition.mrp = {
           [Op.lte]: req.body.minPrice,
         };
       }
       if (req.body.maxPrice) {
-        query.mrp = {
+        condition.mrp = {
           [Op.gte]: req.body.maxPrice,
         };
       }
-      console.log(orArray);
+
       const products = await Product.findAll({
-        where: {
-          status: 'Published',
-          [Op.or]: orArray,
-        },
+        where: condition,
         order: [
           ['id', 'DESC'],
         ],
@@ -151,7 +156,7 @@ const ProductController = () => {
         products,
       });
     } catch (err) {
-      console.log(err)
+      console.log(err);
       return res.status(500).json({
         msg: 'Internal server error',
       });
