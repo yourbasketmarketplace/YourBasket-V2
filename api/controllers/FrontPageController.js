@@ -137,6 +137,7 @@ const ProductController = () => {
           [Op.gte]: req.body.maxPrice,
         };
       }
+      console.log(orArray);
       const products = await Product.findAll({
         where: {
           status: 'Published',
