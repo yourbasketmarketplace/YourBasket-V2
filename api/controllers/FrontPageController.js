@@ -140,7 +140,6 @@ const ProductController = () => {
       const products = await Product.findAll({
         where: {
           status: 'Published',
-          query,
           [Op.or]: orArray,
         },
         order: [
