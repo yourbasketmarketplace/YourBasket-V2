@@ -38,7 +38,7 @@ const ProductController = () => {
         order: [
           ['id', 'DESC'],
         ],
-        limit: 20,
+        limit: 50,
       });
       const brands = await Brand.findAll({
         where: {

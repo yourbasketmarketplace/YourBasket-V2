@@ -20,6 +20,7 @@ const dbService = (environment, migrate) => {
       Review,
       Cart,
       Address,
+      Order,
     } = AllModels();
     Category.hasMany(Category, { foreignKey: 'parent_id', sourceKey: 'id' });
     Category.belongsTo(Category, { foreignKey: 'parent_id', as: 'parentcategory', targetKey: 'id' });
@@ -34,6 +35,10 @@ const dbService = (environment, migrate) => {
     Review.belongsTo(Product, { foreignKey: 'product_id', targetKey: 'id' });
     Cart.belongsTo(User, { foreignKey: 'user_id', targetKey: 'id' });
     Cart.belongsTo(Product, { foreignKey: 'product_id', targetKey: 'id' });
+    Cart.belongsTo(Order, { foreignKey: 'order_id', targetKey: 'id' });
+    Order.belongsTo(User, { foreignKey: 'user_id', targetKey: 'id' });
+    User.hasMany(Order, { foreignKey: 'user_id', targetKey: 'id' });
+    Order.hasMany(Cart, { foreignKey: 'order_id', targetKey: 'id' });
     Address.belongsTo(User, { foreignKey: 'user_id', targetKey: 'id' });
     Product.hasMany(Cart, { foreignKey: 'product_id', targetKey: 'id' });
     User.hasMany(Cart, { foreignKey: 'user_id', targetKey: 'id' });
