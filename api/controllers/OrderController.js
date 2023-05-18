@@ -36,6 +36,7 @@ const OrderController = () => {
             attribute: ['vendor_id'],
           },
         ],
+        raw: true,
       });
       if (cartData.length) {
         req.body.user_id = userInfo.id;
