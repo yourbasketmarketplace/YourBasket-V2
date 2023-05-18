@@ -1,4 +1,5 @@
 // eslint-disable-next-line no-unused-vars
+const sequelize = require('sequelize');
 const AllModels = require('../services/model.service');
 const crypto = require('crypto');
 const axios = require('axios');
@@ -38,15 +39,17 @@ const OrderController = () => {
       if (cartData.length) {
         req.body.user_id = userInfo.id;
         const orderCreated = await Order.create(req.body);
-        const carUpdateData = cartData.map((value) => ({
-          id: value.id,
-          vendor_id: value.Product.user_id,
-          status: 'completed',
-          order_id: orderCreated.id,
-        }));
-        console.log(carUpdateData);
+        const statements = [];
+        const tableName = 'carts';
+
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < cartData.length; i++) {
+          statements.push(sequelize.query(`UPDATE ${tableName} 
+              SET status='completed',  vendor_id='${cartData[i].Product.user_id}', order_id='${orderCreated.id}'
+              WHERE id=${cartData[i].id};`));
+        }
         if (orderCreated) {
-          await Cart.bulkCreate({ carUpdateData, updateOnDuplicate: ['order_id', 'vendor_id', 'status'] });
+          await Promise.all(statements);
           return res.status(200).json({
             orderCreated,
           });
