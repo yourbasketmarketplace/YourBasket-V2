@@ -42,7 +42,6 @@ const dbService = (environment, migrate) => {
     Address.belongsTo(User, { foreignKey: 'user_id', targetKey: 'id' });
     Product.hasMany(Cart, { foreignKey: 'product_id', targetKey: 'id' });
     User.hasMany(Cart, { foreignKey: 'user_id', targetKey: 'id' });
-    User.hasMany(Cart, { foreignKey: 'vendor_id', targetKey: 'id' });
     OrderItem.belongsTo(User, { foreignKey: 'vendor_id', targetKey: 'id' });
     OrderItem.belongsTo(Order, { foreignKey: 'order_id', targetKey: 'id' });
     Order.hasMany(OrderItem, { foreignKey: 'order_id', targetKey: 'id' });
