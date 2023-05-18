@@ -10,7 +10,16 @@ const Order = sequelize.define('Order', {
     unique: false,
   },
   pending_amount: {
-    type: Sequelize.TEXT,
+    type: Sequelize.INTEGER,
+  },
+  payment_method: {
+    type: Sequelize.STRING,
+  },
+  tax_amount: {
+    type: Sequelize.INTEGER,
+  },
+  item_amount: {
+    type: Sequelize.INTEGER,
   },
   status: {
     type: Sequelize.ENUM,

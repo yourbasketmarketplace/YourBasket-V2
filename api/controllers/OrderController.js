@@ -1,5 +1,8 @@
 // eslint-disable-next-line no-unused-vars
 const AllModels = require('../services/model.service');
+const crypto = require('crypto');
+const axios = require('axios');
+
 const helperService = require('../services/helper.service');
 /** ****************************************************************************
  *                              cart Controller
@@ -7,50 +10,110 @@ const helperService = require('../services/helper.service');
 const OrderController = () => {
   const create = async (req, res) => {
     // body is part of a form-data
-    const { Cart } = AllModels();
+    const {
+      Cart,
+      Order,
+      Product,
+    } = AllModels();
     const userInfo = req.token;
     try {
-      const reuireFiled = ['price', 'product_id', 'quantity'];
+      const reuireFiled = ['total_amount', 'payment_method', 'address_id'];
 
       const checkField = helperService.checkRequiredParameter(reuireFiled, req.body);
       if (checkField.isMissingParam) {
         return res.status(400).json({ msg: checkField.message });
       }
-      req.body.user_id = userInfo.id;
-      const cartExist = await Cart.findOne({
+      const cartData = await Cart.findAll({
         where: {
           user_id: userInfo.id,
-          product_id: req.body.product_id,
-          variant: req.body.variant,
+          status: 'active',
         },
-      });
-      let data;
-      if (cartExist) {
-        let { quantity } = cartExist;
-        quantity = req.body.quantity + quantity;
-        data = await Cart.update(
-          { quantity },
+        include: [
           {
-            where: {
-              id: cartExist.id,
-            },
+            model: Product,
+            attribute: ['vendor_id'],
           },
-        );
-      } else {
-        data = await Cart.create(req.body);
-      }
-
-      if (!data) {
-        return res.status(400).json({
-          msg: 'Bad Request: Model not found',
+        ],
+      });
+      if (cartData.length) {
+        const carUpdateData = cartData.map((value) => ({
+          id: value.id,
+          vendor_id: value.Product.user_id,
+          status: 'completed',
+        }));
+        req.body.user_id = userInfo.id;
+        const orderCreated = await Order.create(req.body);
+        if (orderCreated) {
+          await Cart.bulkCreate(carUpdateData);
+          return res.status(200).json({
+            orderCreated,
+          });
+        }
+        return res.status(500).json({
+          msg: 'order not created',
         });
       }
+    } catch (err) {
+      return res.status(500).json({
+        msg: err,
+      });
+    }
+  };
+  const orderWithMpesa = async (req, res) => {
+    // body is part of a form-data
+    const { Cart, Order } = AllModels();
+    const userInfo = req.token;
+    try {
+      const reuireFiled = ['total_amount', 'cart'];
 
+      const checkField = helperService.checkRequiredParameter(reuireFiled, req.body);
+      if (checkField.isMissingParam) {
+        return res.status(400).json({ msg: checkField.message });
+      }
+      // req.body.user_id = userInfo.id;
+      // eslint-disable-next-line no-new
+      const iPaySecret = 'demoCHANGED';
+      const iPayAlgorithm = 'sha256';
+      const iPayData = {
+        live: '0',
+        vid: 'demo',
+        oid: '123222456',
+        inv: '112020102292999',
+        amount: 900,
+        tel: '256712375678',
+        eml: 'pawankt5076@gmail.com',
+        curr: 'KES',
+        p1: 'airtel',
+        p2: 'airtel',
+        p3: '',
+        p4: '900',
+        cbk: 'https://yourbasket.co.ke/',
+        cst: '1',
+        crl: '2',
+      };
+      // The hash digital signature hash of the data for verification.
+      const hashCode = `${iPayData.live}${iPayData.oid}${iPayData.inv}${iPayData.amount}${iPayData.tel}${iPayData.eml}${iPayData.vid}${iPayData.curr}${iPayData.p1}${iPayData.p2}${iPayData.p3}${iPayData.p4}${iPayData.cbk}${iPayData.cst}${iPayData.crl}`;
+      const hash = crypto.createHmac(iPayAlgorithm, iPaySecret).update(hashCode).digest('hex');
+      iPayData.hash = hash;
+      const headers = {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      };
+      axios.post('https://apis.ipayafrica.com/payments/v2/transact', iPayData).then((resp) => {
+        console.log(resp.data);
+      }).catch((err) => {
+        console.log(err);
+      });
+      // creating hmac object
+
+      let data;
       return res.status(200).json({
-        data,
+        iPayData,
+        hashCode,
       });
     } catch (err) {
-      console.log(err)
+      console.log(err);
       return res.status(500).json({
         msg: err,
       });
@@ -95,117 +158,11 @@ const OrderController = () => {
     }
   };
 
-  const get = async (req, res) => {
-    // params is part of an url
-    const { id } = req.params;
-    const { Cart, Product } = AllModels();
-    try {
-      const data = await Cart.findOne({
-        where: {
-          id,
-        },
-        include: [
-          {
-            model: Product,
-          },
-        ],
-      });
-
-      if (!data) {
-        return res.status(400).json({
-          msg: 'Bad Request: Model not found',
-        });
-      }
-
-      return res.status(200).json({
-        data,
-      });
-    } catch (err) {
-      // better save it to log file
-      return res.status(500).json({
-        msg: 'Internal server error',
-      });
-    }
-  };
-
-
-  const update = async (req, res) => {
-    // params is part of an url
-    const { id } = req.params;
-    const { Cart } = AllModels();
-    const userInfo = req.token;
-    // body is part of form-data
-    const {
-      body,
-    } = req;
-    try {
-      const brand = await Cart.findOne({
-        where: {
-          id,
-          user_id: userInfo.id,
-        },
-      });
-
-      if (!brand) {
-        return res.status(400).json({
-          msg: 'Bad Request: Model not found',
-        });
-      }
-
-      const data = await Cart.update(
-        body,
-        {
-          where: {
-            id,
-            user_id: userInfo.id,
-          },
-        },
-      );
-
-      return res.status(200).json({
-        data,
-      });
-    } catch (err) {
-      // better save it to log file
-      return res.status(500).json({
-        msg: err,
-      });
-    }
-  };
-
-
-  const destroy = async (req, res) => {
-    // params is part of an url
-    const { id } = req.params;
-    const { Cart } = AllModels();
-    try {
-      const data = Cart.findById(id);
-
-      if (!data) {
-        return res.status(400).json({
-          msg: 'Bad Request: Model not found',
-        });
-      }
-
-      await data.destroy();
-
-      return res.status(200).json({
-        msg: 'Successfully destroyed model',
-      });
-    } catch (err) {
-      // better save it to log file
-      return res.status(500).json({
-        msg: 'Internal server error',
-      });
-    }
-  };
 
   return {
+    orderWithMpesa,
     create,
     getAll,
-    get,
-    update,
-    destroy,
   };
 };
 

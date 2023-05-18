@@ -30,7 +30,7 @@ const Cart = sequelize.define('Cart', {
   },
   status: {
     type: Sequelize.ENUM,
-    values: ['active', 'inactive'],
+    values: ['active', 'completed', 'inactive'],
     defaultValue: 'active',
   },
 }, {
