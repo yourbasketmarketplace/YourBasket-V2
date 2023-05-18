@@ -6,20 +6,20 @@ const tableName = 'order';
 
 const Order = sequelize.define('Order', {
   total_amount: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.FLOAT,
     unique: false,
   },
   pending_amount: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.FLOAT,
   },
   payment_method: {
-    type: Sequelize.STRING,
+    type: Sequelize.FLOAT,
   },
   tax_amount: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.FLOAT,
   },
   item_amount: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.FLOAT,
   },
   status: {
     type: Sequelize.ENUM,
