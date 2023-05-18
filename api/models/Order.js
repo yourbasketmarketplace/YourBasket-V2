@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 
 const sequelize = require('../../config/database');
 
-const tableName = 'order';
+const tableName = 'orders';
 
 const Order = sequelize.define('Order', {
   total_amount: {
