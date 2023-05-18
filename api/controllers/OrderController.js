@@ -42,7 +42,9 @@ const OrderController = () => {
         req.body.user_id = userInfo.id;
         const orderCreated = await Order.create(req.body);
         const orderItemdata = cartData.map((row) => {
+          console.log(row)
           delete row.id;
+          delete row.type;
           return {
             ...row,
             vendor_id: row.Product.user_id,
