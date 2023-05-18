@@ -13,7 +13,7 @@ const Order = sequelize.define('Order', {
     type: Sequelize.FLOAT,
   },
   payment_method: {
-    type: Sequelize.FLOAT,
+    type: Sequelize.STRING,
   },
   tax_amount: {
     type: Sequelize.FLOAT,
