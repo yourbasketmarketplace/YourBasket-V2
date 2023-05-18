@@ -36,21 +36,19 @@ const OrderController = () => {
             attribute: ['vendor_id'],
           },
         ],
-        raw: true,
       });
       if (cartData.length) {
         req.body.user_id = userInfo.id;
         const orderCreated = await Order.create(req.body);
-        const orderItemdata = cartData.map((row) => {
-          console.log(row)
-          delete row.id;
-          delete row.type;
-          return {
-            ...row,
-            vendor_id: row.Product.user_id,
-            order_id: orderCreated.id,
-          };
-        });
+        const orderItemdata = cartData.map((row) => ({
+          price: row.price,
+          variant: row.variant,
+          product_title: row.product_title,
+          quantity: row.quantity,
+          product_sku: row.product_sku,
+          vendor_id: row.Product.user_id,
+          order_id: orderCreated.id,
+        }));
 
         if (orderCreated) {
           await OrderItem.bulkCreate(orderItemdata);
