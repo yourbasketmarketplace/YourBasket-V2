@@ -41,10 +41,11 @@ const OrderController = () => {
           vendor_id: value.Product.user_id,
           status: 'completed',
         }));
+        console.log(carUpdateData);
         req.body.user_id = userInfo.id;
         const orderCreated = await Order.create(req.body);
         if (orderCreated) {
-          await Cart.bulkCreate(carUpdateData);
+          await Cart.bulkCreate({ carUpdateData, updateOnDuplicate: ['id'] });
           return res.status(200).json({
             orderCreated,
           });
