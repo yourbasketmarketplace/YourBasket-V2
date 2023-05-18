@@ -15,6 +15,7 @@ const OrderController = () => {
       Cart,
       Order,
       Product,
+      OrderItem,
     } = AllModels();
     const userInfo = req.token;
     try {
@@ -39,17 +40,22 @@ const OrderController = () => {
       if (cartData.length) {
         req.body.user_id = userInfo.id;
         const orderCreated = await Order.create(req.body);
-        const statements = [];
-        const tableName = 'carts';
+        const orderItemdata = cartData.map((row) => {
+          delete row.id;
+          return {
+            ...row,
+            vendor_id: row.Product.user_id,
+            order_id: orderCreated.id,
+          };
+        });
 
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < cartData.length; i++) {
-          statements.push(sequelize.query(`UPDATE ${tableName} 
-              SET status='completed',  vendor_id='${cartData[i].Product.user_id}', order_id='${orderCreated.id}'
-              WHERE id=${cartData[i].id};`));
-        }
         if (orderCreated) {
-          await Promise.all(statements);
+          await OrderItem.bulkCreate(orderItemdata);
+          await Cart.destroy({
+            where: {
+              user_id: userInfo.id,
+            },
+          });
           return res.status(200).json({
             orderCreated,
           });
@@ -59,7 +65,7 @@ const OrderController = () => {
         });
       }
     } catch (err) {
-      console.log(err)
+      console.log(err);
       return res.status(500).json({
         msg: err,
       });

@@ -9,6 +9,7 @@ const Review = require('../models/Review');
 const Cart = require('../models/Cart');
 const Address = require('../models/Address');
 const Order = require('../models/Order');
+const OrderItem = require('../models/OrdeItem');
 
 const AllModels = () => ({
   User,
@@ -22,6 +23,7 @@ const AllModels = () => ({
   Cart,
   Address,
   Order,
+  OrderItem,
 });
 
 module.exports = AllModels;
