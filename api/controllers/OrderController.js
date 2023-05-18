@@ -36,16 +36,17 @@ const OrderController = () => {
         ],
       });
       if (cartData.length) {
+        req.body.user_id = userInfo.id;
+        const orderCreated = await Order.create(req.body);
         const carUpdateData = cartData.map((value) => ({
           id: value.id,
           vendor_id: value.Product.user_id,
           status: 'completed',
+          order_id: orderCreated.id,
         }));
         console.log(carUpdateData);
-        req.body.user_id = userInfo.id;
-        const orderCreated = await Order.create(req.body);
         if (orderCreated) {
-          await Cart.bulkCreate({ carUpdateData, updateOnDuplicate: ['id'] });
+          await Cart.bulkCreate({ carUpdateData, updateOnDuplicate: ['order_id', 'vendor_id', 'status'] });
           return res.status(200).json({
             orderCreated,
           });
