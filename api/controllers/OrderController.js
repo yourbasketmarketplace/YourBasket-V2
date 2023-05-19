@@ -3,7 +3,7 @@ const sequelize = require('sequelize');
 const AllModels = require('../services/model.service');
 const crypto = require('crypto');
 const axios = require('axios');
-
+const { Op } = require('sequelize');
 const helperService = require('../services/helper.service');
 /** ****************************************************************************
  *                              cart Controller
@@ -135,36 +135,115 @@ const OrderController = () => {
 
   const getAll = async (req, res) => {
     try {
-      const { Cart, Product, Brand } = AllModels();
-      const { type } = req.query;
+      const { Order, OrderItem } = AllModels();
       const userInfo = req.token;
-      const query = {
-        where: {
-          type,
-          user_id: userInfo.id,
-          status: 'active',
-        },
+      let query = {
         order: [
           ['id', 'DESC'],
         ],
-        include: [
-          {
-            model: Product,
-            include: [
-              {
-                model: Brand,
-              },
-            ],
-          },
-        ],
       };
-
-      const data = await Cart.findAll(query);
+      if (userInfo.role === 'vendor') {
+        query = {
+          include: [
+            {
+              model: OrderItem,
+              where: {
+                vendor_id: userInfo.id,
+              },
+              required: true,
+            },
+          ],
+          order: [
+            ['id', 'DESC'],
+          ],
+        };
+      } else if (userInfo.role === 'customer') {
+        query = {
+          were: {
+            user_id: userInfo.id,
+          },
+          include: [
+            {
+              model: OrderItem,
+              required: false,
+            },
+          ],
+          order: [
+            ['id', 'DESC'],
+          ],
+        };
+      }
+      const data = await Order.findAll(query);
       return res.status(200).json({
         data,
       });
     } catch (err) {
-      console.log(err);
+      return res.status(500).json({
+        msg: 'Internal server error',
+      });
+    }
+  };
+
+  const get = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { Order, OrderItem, Product } = AllModels();
+      const userInfo = req.token;
+      let query = {
+        where: {
+          id,
+        },
+      };
+      if (userInfo.role === 'vendor') {
+        query = {
+          where: {
+            id,
+          },
+          include: [
+            {
+              model: OrderItem,
+              where: {
+                vendor_id: userInfo.id,
+              },
+              required: true,
+              include: [
+                {
+                  model: Product,
+                },
+              ],
+            },
+          ],
+          order: [
+            ['id', 'DESC'],
+          ],
+        };
+      } else if (userInfo.role === 'customer') {
+        query = {
+          were: {
+            user_id: userInfo.id,
+            id,
+          },
+          include: [
+            {
+              model: OrderItem,
+              required: false,
+              include: [
+                {
+                  model: Product,
+                },
+              ],
+            },
+          ],
+          order: [
+            ['id', 'DESC'],
+          ],
+        };
+      }
+      const data = await Order.findOne(query);
+      return res.status(200).json({
+        data,
+      });
+    } catch (err) {
       return res.status(500).json({
         msg: 'Internal server error',
       });
@@ -176,6 +255,7 @@ const OrderController = () => {
     orderWithMpesa,
     create,
     getAll,
+    get,
   };
 };
 
