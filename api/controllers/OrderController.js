@@ -187,12 +187,31 @@ const OrderController = () => {
   const get = async (req, res) => {
     try {
       const { id } = req.params;
-      const { Order, OrderItem, Product } = AllModels();
+      const {
+        Order, OrderItem, Product, Address, User,
+      } = AllModels();
       const userInfo = req.token;
       let query = {
         where: {
           id,
         },
+        include: [
+          {
+            model: OrderItem,
+            required: true,
+            include: [
+              {
+                model: Product,
+              },
+            ],
+          },
+          {
+            model: Address,
+          },
+          {
+            model: User,
+          },
+        ],
       };
       if (userInfo.role === 'vendor') {
         query = {
@@ -212,9 +231,12 @@ const OrderController = () => {
                 },
               ],
             },
-          ],
-          order: [
-            ['id', 'DESC'],
+            {
+              model: Address,
+            },
+            {
+              model: User,
+            },
           ],
         };
       } else if (userInfo.role === 'customer') {
@@ -233,9 +255,12 @@ const OrderController = () => {
                 },
               ],
             },
-          ],
-          order: [
-            ['id', 'DESC'],
+            {
+              model: Address,
+            },
+            {
+              model: User,
+            },
           ],
         };
       }
