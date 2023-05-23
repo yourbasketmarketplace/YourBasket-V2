@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const axios = require('axios');
 const { Op } = require('sequelize');
 const helperService = require('../services/helper.service');
+const PaymentService = require('../services/payment.service');
 /** ****************************************************************************
  *                              cart Controller
  ***************************************************************************** */
@@ -25,48 +26,72 @@ const OrderController = () => {
       if (checkField.isMissingParam) {
         return res.status(400).json({ msg: checkField.message });
       }
-      const cartData = await Cart.findAll({
-        where: {
-          user_id: userInfo.id,
-          status: 'active',
-        },
-        include: [
-          {
-            model: Product,
-            attribute: ['vendor_id'],
-          },
-        ],
-      });
-      if (cartData.length) {
-        req.body.user_id = userInfo.id;
-        const orderCreated = await Order.create(req.body);
-        const orderItemdata = cartData.map((row) => ({
-          price: row.price,
-          variant: row.variant,
-          product_title: row.product_title,
-          quantity: row.quantity,
-          product_sku: row.product_sku,
-          vendor_id: row.Product.user_id,
-          order_id: orderCreated.id,
-        }));
-
-        if (orderCreated) {
-          await OrderItem.bulkCreate(orderItemdata);
-          await Cart.destroy({
-            where: {
-              user_id: userInfo.id,
-            },
-          });
+      let orderContinue = false;
+      if (req.body.payment_method === 'Pesapal') {
+        const result = await PaymentService.pesapal({
+          totalAmount: req.body.total_amount,
+          addressId: req.body.address_id,
+          user_id: 7,
+        });
+        console.log(result, 'result');
+        if (result.success) {
           return res.status(200).json({
-            orderCreated,
+            data: result.data,
           });
         }
-        return res.status(500).json({
-          msg: 'order not created',
+        return res.status(400).json({
+          msg: result.error,
+        });
+      } else if (req.body.payment_method === 'Cash on delivery') {
+        orderContinue = true;
+      }
+      if (orderContinue) {
+        const cartData = await Cart.findAll({
+          where: {
+            user_id: userInfo.id,
+            status: 'active',
+          },
+          include: [
+            {
+              model: Product,
+              attribute: ['vendor_id'],
+            },
+          ],
+        });
+        if (cartData.length) {
+          req.body.user_id = userInfo.id;
+          const orderCreated = await Order.create(req.body);
+          const orderItemdata = cartData.map((row) => ({
+            price: row.price,
+            variant: row.variant,
+            product_title: row.product_title,
+            quantity: row.quantity,
+            product_sku: row.product_sku,
+            vendor_id: row.Product.user_id,
+            order_id: orderCreated.id,
+          }));
+
+          if (orderCreated) {
+            await OrderItem.bulkCreate(orderItemdata);
+            await Cart.destroy({
+              where: {
+                user_id: userInfo.id,
+              },
+            });
+            return res.status(200).json({
+              orderCreated,
+            });
+          }
+          return res.status(500).json({
+            msg: 'order not created',
+          });
+        }
+      } else {
+        return res.status(400).json({
+          msg: 'Method not allowed',
         });
       }
     } catch (err) {
-      console.log(err);
       return res.status(500).json({
         msg: err,
       });
@@ -269,19 +294,22 @@ const OrderController = () => {
         data,
       });
     } catch (err) {
-      console.log(err)
+      console.log(err);
       return res.status(500).json({
         msg: 'Internal server error',
       });
     }
   };
 
-
+  const pesaPal = async (req, res) => {
+    console.log(req.body);
+  };
   return {
     orderWithMpesa,
     create,
     getAll,
     get,
+    pesaPal,
   };
 };
 
