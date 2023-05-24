@@ -79,6 +79,7 @@ const OrderController = () => {
             quantity: row.quantity,
             product_sku: row.product_sku,
             vendor_id: row.Product.user_id,
+            product_id: row.Product.id,
             order_id: orderCreated.id,
           }));
 
@@ -355,6 +356,7 @@ const OrderController = () => {
             quantity: row.quantity,
             product_sku: row.product_sku,
             vendor_id: row.Product.user_id,
+            product_id: row.Product.id,
             order_id: orderCreated.id,
           }));
           console.log(orderItemdata);
