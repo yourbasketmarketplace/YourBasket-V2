@@ -42,6 +42,7 @@ const OrderController = () => {
           user_id: userInfo.id,
           item_amount: req.body.item_amount,
           tax_amount: req.body.tax_amount,
+          payment_method: req.body.payment_method,
           user,
         });
         if (result.success) {
@@ -321,9 +322,8 @@ const OrderController = () => {
       } = AllModels();
       const {
         user_id, address_id, OrderTrackingId, OrderMerchantReference,
-        amount, item_amount, tax_amount, payment_method,
+        amount, item_amount, tax_amount,
       } = req.query;
-      console.log(req.query)
       if (user_id && address_id && OrderTrackingId && OrderMerchantReference && amount) {
         const cartData = await Cart.findAll({
           where: {
@@ -344,7 +344,7 @@ const OrderController = () => {
           req.body.total_amount = amount;
           req.body.item_amount = item_amount;
           req.body.tax_amount = tax_amount;
-          req.body.payment_method = payment_method;
+          req.body.payment_method = 'Pesapal';
           req.body.order_tracking_id = OrderTrackingId;
           req.body.merchant_reference = OrderMerchantReference;
           const orderCreated = await Order.create(req.body);
@@ -357,8 +357,9 @@ const OrderController = () => {
             vendor_id: row.Product.user_id,
             order_id: orderCreated.id,
           }));
-
+          console.log(orderCreated, orderItemdata);
           if (orderCreated) {
+            console.log('orderCreated')
             await OrderItem.bulkCreate(orderItemdata);
             await Cart.destroy({
               where: {
