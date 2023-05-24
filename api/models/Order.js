@@ -21,6 +21,12 @@ const Order = sequelize.define('Order', {
   item_amount: {
     type: Sequelize.FLOAT,
   },
+  order_tracking_id: {
+    type: Sequelize.STRING,
+  },
+  merchant_reference: {
+    type: Sequelize.STRING,
+  },
   status: {
     type: Sequelize.ENUM,
     values: ['active', 'inactive'],

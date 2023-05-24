@@ -9,7 +9,7 @@ exports.pesapal = async (data = {}) => {
     const tokenData = await axios.post('https://cybqa.pesapal.com/pesapalv3/api/Auth/RequestToken', configKey);
 
     let postdata = {
-      url: `https://api.yourbasket.co.ke/api/payment/ipn?user_id=${data.user_id}&address_id=${data.addressId}`,
+      url: `https://api.yourbasket.co.ke/api/payment/ipn?user_id=${data.user_id}&address_id=${data.addressId}&amount=${data.amount}&item_amount=${data.item_amount}&tax_amount=${data.tax_amount}&payment_menthod='Pesapal'`,
       ipn_notification_type: 'GET',
     };
 
@@ -33,7 +33,7 @@ exports.pesapal = async (data = {}) => {
       postdata = {
         id: new Date().getTime(),
         currency: 'KES',
-        amount: 100,
+        amount: data.amount,
         description: 'Payment description goes here',
         callback_url: 'https://yourbasket.co.ke/#/myorders',
         cancellation_url: 'https://yourbasket.co.ke/#/checkout',

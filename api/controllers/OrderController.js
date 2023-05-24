@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 // eslint-disable-next-line no-unused-vars
 const sequelize = require('sequelize');
 const AllModels = require('../services/model.service');
@@ -39,6 +40,8 @@ const OrderController = () => {
           totalAmount: req.body.total_amount,
           addressId: req.body.address_id,
           user_id: userInfo.id,
+          item_amount: req.body.item_amount,
+          tax_amount: req.body.tax_amount,
           user,
         });
         if (result.success) {
@@ -309,8 +312,73 @@ const OrderController = () => {
   };
 
   const pesaPalIpn = async (req, res) => {
-    console.log(req.body);
-    console.log(req.query);
+    try {
+      const {
+        Cart,
+        Order,
+        Product,
+        OrderItem,
+      } = AllModels();
+      const {
+        user_id, address_id, OrderTrackingId, OrderMerchantReference,
+        amount, item_amount, tax_amount, payment_method,
+      } = req.query;
+      console.log(req.query)
+      if (user_id && address_id && OrderTrackingId && OrderMerchantReference && amount) {
+        const cartData = await Cart.findAll({
+          where: {
+            user_id,
+            status: 'active',
+          },
+          include: [
+            {
+              model: Product,
+              attribute: ['vendor_id'],
+            },
+          ],
+        });
+        if (cartData.length) {
+          req.body.user_id = user_id;
+          req.body.address_id = address_id;
+          req.body.address_id = address_id;
+          req.body.total_amount = amount;
+          req.body.item_amount = item_amount;
+          req.body.tax_amount = tax_amount;
+          req.body.payment_method = payment_method;
+          req.body.order_tracking_id = OrderTrackingId;
+          req.body.merchant_reference = OrderMerchantReference;
+          const orderCreated = await Order.create(req.body);
+          const orderItemdata = cartData.map((row) => ({
+            price: row.price,
+            variant: row.variant,
+            product_title: row.product_title,
+            quantity: row.quantity,
+            product_sku: row.product_sku,
+            vendor_id: row.Product.user_id,
+            order_id: orderCreated.id,
+          }));
+
+          if (orderCreated) {
+            await OrderItem.bulkCreate(orderItemdata);
+            await Cart.destroy({
+              where: {
+                user_id,
+              },
+            });
+            return res.status(200).json({
+              orderCreated,
+            });
+          }
+          return res.status(500).json({
+            msg: 'order not created',
+          });
+        }
+      }
+    } catch (err) {
+      return res.status(500).json({
+        msg: err,
+      });
+    }
   };
   return {
     orderWithMpesa,
