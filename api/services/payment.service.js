@@ -35,7 +35,7 @@ exports.pesapal = async (data = {}) => {
         currency: 'KES',
         amount: 100,
         description: 'Payment description goes here',
-        callback_url: 'https://yourbasket.co.ke/#/myorder',
+        callback_url: 'https://yourbasket.co.ke/#/myorders',
         cancellation_url: 'https://yourbasket.co.ke/#/checkout',
         notification_id: ipnData.data.ipn_id,
         billing_address: {
