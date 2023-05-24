@@ -17,6 +17,7 @@ const OrderController = () => {
       Order,
       Product,
       OrderItem,
+      User,
     } = AllModels();
     const userInfo = req.token;
     try {
@@ -27,13 +28,19 @@ const OrderController = () => {
         return res.status(400).json({ msg: checkField.message });
       }
       let orderContinue = false;
+
       if (req.body.payment_method === 'Pesapal') {
+        const user = await User.findOne({
+          where: {
+            id: userInfo.id,
+          },
+        });
         const result = await PaymentService.pesapal({
           totalAmount: req.body.total_amount,
           addressId: req.body.address_id,
-          user_id: 7,
+          user_id: userInfo.id,
+          user,
         });
-        console.log(result, 'result');
         if (result.success) {
           return res.status(200).json({
             data: result.data,
@@ -301,15 +308,16 @@ const OrderController = () => {
     }
   };
 
-  const pesaPal = async (req, res) => {
+  const pesaPalIpn = async (req, res) => {
     console.log(req.body);
+    console.log(req.query);
   };
   return {
     orderWithMpesa,
     create,
     getAll,
     get,
-    pesaPal,
+    pesaPalIpn,
   };
 };
 
