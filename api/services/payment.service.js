@@ -31,7 +31,7 @@ exports.pesapal = async (data = {}) => {
       config.url = 'https://cybqa.pesapal.com/pesapalv3/apiURLSetup/GetIpnList';
       await axios.request(config);
       postdata = {
-        id: ipnData.data.id,
+        id: new Date().getTime(),
         currency: 'KES',
         amount: 100,
         description: 'Payment description goes here',
