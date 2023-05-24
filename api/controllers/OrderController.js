@@ -357,28 +357,23 @@ const OrderController = () => {
             vendor_id: row.Product.user_id,
             order_id: orderCreated.id,
           }));
-          console.log(orderCreated, orderItemdata);
+          console.log(orderItemdata);
           if (orderCreated) {
-            console.log('orderCreated')
-            await OrderItem.bulkCreate(orderItemdata);
-            await Cart.destroy({
-              where: {
-                user_id,
-              },
-            });
-            return res.status(200).json({
-              orderCreated,
-            });
+            try {
+              await OrderItem.bulkCreate(orderItemdata);
+              await Cart.destroy({
+                where: {
+                  user_id,
+                },
+              });
+            } catch (err) {
+              console.log(err);
+            }
           }
-          return res.status(500).json({
-            msg: 'order not created',
-          });
         }
       }
     } catch (err) {
-      return res.status(500).json({
-        msg: err,
-      });
+      console.log(err);
     }
   };
   return {
