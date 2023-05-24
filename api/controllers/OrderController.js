@@ -172,7 +172,9 @@ const OrderController = () => {
 
   const getAll = async (req, res) => {
     try {
-      const { Order, OrderItem } = AllModels();
+      const {
+        Order, OrderItem, Product, Address,
+      } = AllModels();
       const userInfo = req.token;
       let query = {
         order: [
@@ -194,7 +196,7 @@ const OrderController = () => {
             ['id', 'DESC'],
           ],
         };
-      } else if (userInfo.role === 'customer') {
+      } else if (userInfo.role === 'user') {
         query = {
           were: {
             user_id: userInfo.id,
@@ -203,6 +205,14 @@ const OrderController = () => {
             {
               model: OrderItem,
               required: false,
+              include: [
+                {
+                  model: Product,
+                },
+              ],
+            },
+            {
+              model: Address,
             },
           ],
           order: [
