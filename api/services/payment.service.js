@@ -138,7 +138,7 @@ exports.mpesa = async (data = {}) => {
       Password: password,
       Timestamp: timestamp,
       TransactionType: 'CustomerPayBillOnline',
-      Amount: (data.totalAmount) ? data.totalAmoun : 1,
+      Amount: (data.totalAmount) ? data.totalAmount : 1,
       PartyA: `254${data.user.phone}`,
       PartyB: 174379,
       PhoneNumber: `254${data.user.phone}`,
