@@ -115,11 +115,10 @@ exports.pesapalTransactionSatus = async (orderTrackingId = {}) => {
 };
 
 exports.mpesa = async (data = {}) => {
-  const consumerKey = 'ToDO6k8kjGoNcs7sI5cCQhLmO11Wtxyl';
-  const consumerSecret = 'nAVDGbv563EpfXFZ';
-  const auth = new Buffer.from(`${consumerKey}:${consumerSecret}`).toString('base64');
-  console.log(auth);
   try {
+    const consumerKey = 'ToDO6k8kjGoNcs7sI5cCQhLmO11Wtxyl';
+    const consumerSecret = 'nAVDGbv563EpfXFZ';
+    const auth = new Buffer.from(`${consumerKey}:${consumerSecret}`).toString('base64');
     const config = {
       method: 'get',
       url: 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials',
@@ -153,8 +152,9 @@ exports.mpesa = async (data = {}) => {
     config.headers.Authorization = `Bearer ${tokenData.data.access_token}`;
     const paymentData = await axios.request(config);
     return { error: false, data: paymentData };
-  } catch (err) {
-    return { error: true, data: err };
+  } catch (error) {
+    console.log(error)
+    return { error: true, data: 'Invalid phone number' };
   }
 };
 

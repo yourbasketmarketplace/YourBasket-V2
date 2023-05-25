@@ -22,7 +22,6 @@ const OrderController = () => {
     } = AllModels();
     const userInfo = req.token;
     try {
-      await PaymentService.mpesa({});
       const reuireFiled = ['total_amount', 'payment_method', 'address_id'];
 
       const checkField = helperService.checkRequiredParameter(reuireFiled, req.body);
@@ -57,9 +56,8 @@ const OrderController = () => {
       } else if (req.body.payment_method === 'Mpesa') {
         const result = await PaymentService.mpesa(paymentData);
         if (result.error) {
-          console.log(result.data);
           return res.status(400).json({
-            msg: result.data.errorMessage,
+            msg: result.data,
           });
         }
         return res.status(200).json({
