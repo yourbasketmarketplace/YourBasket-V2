@@ -104,7 +104,6 @@ exports.pesapalTransactionSatus = async (orderTrackingId = {}) => {
     };
 
     const transactionData = await axios.request(config);
-    console.log(transactionData);
     return transactionData;
   } catch (err) {
     return {
@@ -138,8 +137,7 @@ exports.mpesa = async (data = {}) => {
       Password: password,
       Timestamp: timestamp,
       TransactionType: 'CustomerPayBillOnline',
-      //Amount: (data.totalAmount) ? data.totalAmount : 1,
-      Amount:1,
+      Amount: (data.totalAmount) ? data.totalAmount : 1,
       PartyA: `254${data.user.phone}`,
       PartyB: 174379,
       PhoneNumber: `254${data.user.phone}`,
@@ -152,10 +150,45 @@ exports.mpesa = async (data = {}) => {
     config.data = postData;
     config.headers.Authorization = `Bearer ${tokenData.data.access_token}`;
     const paymentData = await axios.request(config);
-    return { error: false, data: paymentData };
+    return { error: false, data: paymentData.data };
   } catch (error) {
-    console.log(error)
     return { error: true, data: 'Invalid phone number' };
+  }
+};
+
+exports.mpesaQuery = async (CheckoutRequestID = {}) => {
+  try {
+    const consumerKey = 'ToDO6k8kjGoNcs7sI5cCQhLmO11Wtxyl';
+    const consumerSecret = 'nAVDGbv563EpfXFZ';
+    const auth = new Buffer.from(`${consumerKey}:${consumerSecret}`).toString('base64');
+    const config = {
+      method: 'get',
+      url: 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials',
+      headers: {
+        Authorization: `Basic ${auth}`,
+      },
+    };
+    // 254708374149
+    const tokenData = await axios.request(config);
+    const timestamp = moment().format('YYYYMMDDHHmmss');
+    const passkey = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919';
+    const shortCode = '174379';
+    const queryUrl = 'https://sandbox.safaricom.co.ke/mpesa/stkpushquery/v1/query';
+    const password = new Buffer.from(`${shortCode}${passkey}${timestamp}`).toString('base64');
+    const postData = {
+      BusinessShortCode: shortCode,
+      Password: password,
+      Timestamp: timestamp,
+      CheckoutRequestID,
+    };
+    config.url = queryUrl;
+    config.method = 'Post';
+    config.data = postData;
+    config.headers.Authorization = `Bearer ${tokenData.data.access_token}`;
+    const paymentData = await axios.request(config);
+    return { error: false, data: paymentData.data };
+  } catch (error) {
+    return { error: true, data: error };
   }
 };
 

@@ -61,7 +61,7 @@ const OrderController = () => {
           });
         }
         return res.status(200).json({
-          msg: 'Success. Request accepted for processing',
+          data: result.data,
         });
       } else if (req.body.payment_method === 'Cash on delivery') {
         orderContinue = true;
@@ -121,16 +121,82 @@ const OrderController = () => {
   };
   const orderWithMpesa = async (req, res) => {
     // body is part of a form-data
-    const {
-      Paymentlog,
-    } = AllModels();
-    const data = {};
-    data.logbody = JSON.stringify(req.body);
-    data.logquery = JSON.stringify(req.query);
-    await Paymentlog.create(data);
-    return res.status(200).json({
-      msg: 'sucess',
-    });
+    try {
+      const {
+        Cart,
+        Order,
+        Product,
+        OrderItem,
+        Paymentlog,
+      } = AllModels();
+      const logData = {};
+      logData.logbody = JSON.stringify(req.body);
+      logData.logquery = JSON.stringify(req.query);
+      await Paymentlog.create(logData);
+      const {
+        user_id, address_id,
+        amount, item_amount, tax_amount,
+      } = req.query;
+      const { data } = req.body.Body.stkCallback;
+      if (user_id && address_id && data.ResultCode === 0) {
+        const cartData = await Cart.findAll({
+          where: {
+            user_id,
+            status: 'active',
+          },
+          include: [
+            {
+              model: Product,
+              attribute: ['vendor_id'],
+            },
+          ],
+        });
+        if (cartData.length) {
+          req.body.user_id = user_id;
+          req.body.address_id = address_id;
+          req.body.address_id = address_id;
+          req.body.total_amount = amount;
+          req.body.item_amount = item_amount;
+          req.body.tax_amount = tax_amount;
+          req.body.payment_method = 'Mpesa';
+          req.body.order_tracking_id = data.CheckoutRequestID;
+          req.body.merchant_reference = data.MerchantRequestID;
+          const orderCreated = await Order.create(req.body);
+          const orderItemdata = cartData.map((row) => ({
+            price: row.price,
+            variant: row.variant,
+            product_title: row.product_title,
+            quantity: row.quantity,
+            product_sku: row.product_sku,
+            vendor_id: row.Product.user_id,
+            product_id: row.Product.id,
+            order_id: orderCreated.id,
+          }));
+          if (orderCreated) {
+            try {
+              await OrderItem.bulkCreate(orderItemdata);
+              await Cart.destroy({
+                where: {
+                  user_id,
+                },
+              });
+            } catch (err) {
+              console.log(err);
+            }
+          }
+        }
+        return res.status(200).json({
+          msg: 'sucess',
+        });
+      }
+      return res.status(400).json({
+        msg: 'not allowed',
+      });
+    } catch (err) {
+      return res.status(500).json({
+        msg: 'Internal server error',
+      });
+    }
   };
 
   const getAll = async (req, res) => {
@@ -361,12 +427,31 @@ const OrderController = () => {
       });
     }
   };
+
+  const mpesaQuery = async (req, res) => {
+    const reuireFiled = ['CheckoutRequestID'];
+
+    const checkField = helperService.checkRequiredParameter(reuireFiled, req.body);
+    if (checkField.isMissingParam) {
+      return res.status(400).json({ msg: checkField.message });
+    }
+    const result = await PaymentService.mpesaQuery(req.body.CheckoutRequestID);
+    if (result.error) {
+      return res.status(400).json({
+        msg: result.data,
+      });
+    }
+    return res.status(200).json({
+      data: result.data,
+    });
+  };
   return {
     orderWithMpesa,
     create,
     getAll,
     get,
     pesaPalIpn,
+    mpesaQuery,
   };
 };
 

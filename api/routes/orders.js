@@ -6,5 +6,6 @@ router.post('/', auth, (req, res) => OrderController().create(req, res));
 router.post('/mpesa', (req, res) => OrderController().orderWithMpesa(req, res));
 router.get('/', auth, (req, res) => OrderController().getAll(req, res));
 router.get('/:id', auth, (req, res) => OrderController().get(req, res));
+router.post('/mpesaquery', (req, res) => OrderController().mpesaQuery(req, res));
 
 module.exports = router;
