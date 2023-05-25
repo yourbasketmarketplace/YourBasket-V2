@@ -57,9 +57,9 @@ const OrderController = () => {
       } else if (req.body.payment_method === 'Mpesa') {
         const result = await PaymentService.mpesa(paymentData);
         if (result.error) {
-          console.log(result.data, result.data.data.errorMessage);
+          console.log(result.data);
           return res.status(400).json({
-            msg: result.data.data.errorMessage,
+            msg: result.data.errorMessage,
           });
         }
         return res.status(200).json({
