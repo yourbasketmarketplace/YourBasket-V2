@@ -10,6 +10,7 @@ const Cart = require('../models/Cart');
 const Address = require('../models/Address');
 const Order = require('../models/Order');
 const OrderItem = require('../models/OrdeItem');
+const Paymentlog = require('../models/Paymentlog');
 
 const AllModels = () => ({
   User,
@@ -24,6 +25,7 @@ const AllModels = () => ({
   Address,
   Order,
   OrderItem,
+  Paymentlog,
 });
 
 module.exports = AllModels;

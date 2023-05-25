@@ -22,6 +22,7 @@ const OrderController = () => {
     } = AllModels();
     const userInfo = req.token;
     try {
+      await PaymentService.mpesa({});
       const reuireFiled = ['total_amount', 'payment_method', 'address_id'];
 
       const checkField = helperService.checkRequiredParameter(reuireFiled, req.body);
@@ -29,22 +30,22 @@ const OrderController = () => {
         return res.status(400).json({ msg: checkField.message });
       }
       let orderContinue = false;
-
+      const user = await User.findOne({
+        where: {
+          id: userInfo.id,
+        },
+      });
+      const paymentData = {
+        totalAmount: req.body.total_amount,
+        addressId: req.body.address_id,
+        user_id: userInfo.id,
+        item_amount: req.body.item_amount,
+        tax_amount: req.body.tax_amount,
+        payment_method: req.body.payment_method,
+        user,
+      };
       if (req.body.payment_method === 'Pesapal') {
-        const user = await User.findOne({
-          where: {
-            id: userInfo.id,
-          },
-        });
-        const result = await PaymentService.pesapal({
-          totalAmount: req.body.total_amount,
-          addressId: req.body.address_id,
-          user_id: userInfo.id,
-          item_amount: req.body.item_amount,
-          tax_amount: req.body.tax_amount,
-          payment_method: req.body.payment_method,
-          user,
-        });
+        const result = await PaymentService.pesapal(paymentData);
         if (result.success) {
           return res.status(200).json({
             data: result.data,
@@ -52,6 +53,16 @@ const OrderController = () => {
         }
         return res.status(400).json({
           msg: result.error,
+        });
+      } else if (req.body.payment_method === 'Mpesa') {
+        const result = await PaymentService.mpesa(paymentData);
+        if (result.error) {
+          return res.status(400).json({
+            msg: 'Something wne wrong',
+          });
+        }
+        return res.status(200).json({
+          msg: 'Success. Request accepted for processing',
         });
       } else if (req.body.payment_method === 'Cash on delivery') {
         orderContinue = true;
@@ -111,63 +122,16 @@ const OrderController = () => {
   };
   const orderWithMpesa = async (req, res) => {
     // body is part of a form-data
-    const { Cart, Order } = AllModels();
-    const userInfo = req.token;
-    try {
-      const reuireFiled = ['total_amount', 'cart'];
-
-      const checkField = helperService.checkRequiredParameter(reuireFiled, req.body);
-      if (checkField.isMissingParam) {
-        return res.status(400).json({ msg: checkField.message });
-      }
-      // req.body.user_id = userInfo.id;
-      // eslint-disable-next-line no-new
-      const iPaySecret = 'demoCHANGED';
-      const iPayAlgorithm = 'sha256';
-      const iPayData = {
-        live: '0',
-        vid: 'demo',
-        oid: '123222456',
-        inv: '112020102292999',
-        amount: 900,
-        tel: '256712375678',
-        eml: 'pawankt5076@gmail.com',
-        curr: 'KES',
-        p1: 'airtel',
-        p2: 'airtel',
-        p3: '',
-        p4: '900',
-        cbk: 'https://yourbasket.co.ke/',
-        cst: '1',
-        crl: '2',
-      };
-      // The hash digital signature hash of the data for verification.
-      const hashCode = `${iPayData.live}${iPayData.oid}${iPayData.inv}${iPayData.amount}${iPayData.tel}${iPayData.eml}${iPayData.vid}${iPayData.curr}${iPayData.p1}${iPayData.p2}${iPayData.p3}${iPayData.p4}${iPayData.cbk}${iPayData.cst}${iPayData.crl}`;
-      const hash = crypto.createHmac(iPayAlgorithm, iPaySecret).update(hashCode).digest('hex');
-      iPayData.hash = hash;
-      const headers = {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      };
-      axios.post('https://apis.ipayafrica.com/payments/v2/transact', iPayData).then((resp) => {
-        console.log(resp.data);
-      }).catch((err) => {
-        console.log(err);
-      });
-      // creating hmac object
-
-      let data;
-      return res.status(200).json({
-        iPayData,
-        hashCode,
-      });
-    } catch (err) {
-      console.log(err);
-      return res.status(500).json({
-        msg: err,
-      });
-    }
+    const {
+      Paymentlog,
+    } = AllModels();
+    const data = {};
+    data.logbody = JSON.stringify(req.body);
+    data.logquery = JSON.stringify(req.query);
+    await Paymentlog.create(data);
+    return res.status(200).json({
+      msg: 'sucess',
+    });
   };
 
   const getAll = async (req, res) => {
@@ -336,6 +300,8 @@ const OrderController = () => {
         amount, item_amount, tax_amount,
       } = req.query;
       if (user_id && address_id && OrderTrackingId && OrderMerchantReference && amount) {
+        const result = await PaymentService.pesapalTransactionSatus(OrderTrackingId);
+        console.log(result.data);
         const cartData = await Cart.findAll({
           where: {
             user_id,
@@ -383,9 +349,17 @@ const OrderController = () => {
             }
           }
         }
+        return res.status(200).json({
+          msg: 'sucess',
+        });
       }
+      return res.status(400).json({
+        msg: 'not allowed',
+      });
     } catch (err) {
-      console.log(err);
+      return res.status(500).json({
+        msg: 'Internal server error',
+      });
     }
   };
   return {

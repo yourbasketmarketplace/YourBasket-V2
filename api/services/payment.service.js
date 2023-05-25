@@ -1,4 +1,5 @@
 const axios = require('axios');
+const moment = require('moment');
 
 exports.pesapal = async (data = {}) => {
   const configKey = {
@@ -82,6 +83,78 @@ exports.pesapal = async (data = {}) => {
       error: 'Someting went wrong',
       success: false,
     };
+  }
+};
+exports.pesapalTransactionSatus = async (orderTrackingId = {}) => {
+  const configKey = {
+    consumer_key: 'qkio1BGGYAXTu2JOfm7XSXNruoZsrqEW',
+    consumer_secret: 'osGQ364R49cXKeOYSpaOnT++rHs=',
+  };
+  try {
+    const tokenData = await axios.post('https://cybqa.pesapal.com/pesapalv3/api/Auth/RequestToken', configKey);
+    const config = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `https://cybqa.pesapal.com/pesapalv3/api/Transactions/GetTransactionStatus?orderTrackingId=${orderTrackingId}`,
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${tokenData.data.token}`,
+      },
+    };
+
+    const transactionData = await axios.request(config);
+    console.log(transactionData);
+    return transactionData;
+  } catch (err) {
+    return {
+      error: 'Someting went wrong',
+      success: false,
+    };
+  }
+};
+
+exports.mpesa = async (data = {}) => {
+  const consumerKey = 'ToDO6k8kjGoNcs7sI5cCQhLmO11Wtxyl';
+  const consumerSecret = 'nAVDGbv563EpfXFZ';
+  const auth = new Buffer.from(`${consumerKey}:${consumerSecret}`).toString('base64');
+  console.log(auth);
+  try {
+    const config = {
+      method: 'get',
+      url: 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials',
+      headers: {
+        Authorization: `Basic ${auth}`,
+      },
+    };
+    // 254708374149
+    const tokenData = await axios.request(config);
+    const timestamp = moment().format('YYYYMMDDHHmmss');
+    const passkey = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919';
+    const shortCode = '174379';
+    const paymentUrl = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
+    const password = new Buffer.from(`${shortCode}${passkey}${timestamp}`).toString('base64');
+    const postData = {
+      BusinessShortCode: shortCode,
+      Password: password,
+      Timestamp: timestamp,
+      TransactionType: 'CustomerPayBillOnline',
+      Amount: (data.totalAmount) ? data.totalAmoun : 1,
+      PartyA: `254${data.user.phone}`,
+      PartyB: 174379,
+      PhoneNumber: `254${data.user.phone}`,
+      CallBackURL: `https://api.yourbasket.co.ke/api/order/mpesa?user_id=${data.user_id}&address_id=${data.addressId}&amount=${data.totalAmount}&item_amount=${data.item_amount}&tax_amount=${data.tax_amount}&payment_menthod='Pesapal'`,
+      AccountReference: 'CompanyXLTD',
+      TransactionDesc: 'Payment of X',
+    };
+    config.url = paymentUrl;
+    config.method = 'Post';
+    config.data = postData;
+    config.headers.Authorization = `Bearer ${tokenData.data.access_token}`;
+    const paymentData = await axios.request(config);
+    return { error: false, data: paymentData };
+  } catch (err) {
+    return { error: true, data: err };
   }
 };
 
