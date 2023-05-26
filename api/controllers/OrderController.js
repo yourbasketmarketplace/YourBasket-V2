@@ -138,6 +138,9 @@ const OrderController = () => {
         amount, item_amount, tax_amount,
       } = req.query;
       const { data } = req.body.Body.stkCallback;
+      const io = req.app.get('socketio');
+      io.emit('paymentstatus', data);
+
       if (user_id && address_id && data.ResultCode === 0) {
         const cartData = await Cart.findAll({
           where: {

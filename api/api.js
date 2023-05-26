@@ -8,7 +8,15 @@ const http = require('http');
 const cors = require('cors');
 const _ = require('lodash');
 
+/**
+ * express application
+ */
+const app = express();
+const server = http.Server(app);
+const io = require('socket.io')(server);
 
+console.log(io);
+app.set('socketio', io);
 /**
  * Swagger UI Configuration
  */
@@ -53,16 +61,11 @@ const dbService = require('./services/db.service');
 // environment: development, staging, testing, production
 const environment = process.env.NODE_ENV;
 
-/**
- * express application
- */
-const app = express();
-const server = http.Server(app);
 
 const DB = dbService(environment, config.migrate).start();
 
 
-app.get('/swagger.json', function(req, res) {
+app.get('/swagger.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   res.send(swaggerSpec);
 });
@@ -79,7 +82,7 @@ app.use(helmet({
   ieNoOpen: false,
 }));
 
-//define static folder
+// define static folder
 app.use(express.static('public'));
 
 // parsing the request bodys
@@ -90,6 +93,7 @@ app.use(bodyParser.json());
  * Configure Routes
  */
 require('../config/routes').set_routes(app);
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 server.listen(config.port, () => {
