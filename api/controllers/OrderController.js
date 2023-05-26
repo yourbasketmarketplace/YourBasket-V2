@@ -137,11 +137,11 @@ const OrderController = () => {
         user_id, address_id,
         amount, item_amount, tax_amount,
       } = req.query;
-      const { data } = req.body.Body.stkCallback;
+      const { stkCallback } = req.body.Body;
       const io = req.app.get('socketio');
-      io.emit('paymentstatus', data);
+      io.emit('paymentstatus', { data: stkCallback, user_id });
 
-      if (user_id && address_id && data.ResultCode === 0) {
+      if (user_id && address_id && stkCallback.ResultCode === 0) {
         const cartData = await Cart.findAll({
           where: {
             user_id,
@@ -162,8 +162,8 @@ const OrderController = () => {
           req.body.item_amount = item_amount;
           req.body.tax_amount = tax_amount;
           req.body.payment_method = 'Mpesa';
-          req.body.order_tracking_id = data.CheckoutRequestID;
-          req.body.merchant_reference = data.MerchantRequestID;
+          req.body.order_tracking_id = stkCallback.CheckoutRequestID;
+          req.body.merchant_reference = stkCallback.MerchantRequestID;
           const orderCreated = await Order.create(req.body);
           const orderItemdata = cartData.map((row) => ({
             price: row.price,
