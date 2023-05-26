@@ -8,15 +8,7 @@ const http = require('http');
 const cors = require('cors');
 const _ = require('lodash');
 
-/**
- * express application
- */
-const app = express();
-const server = http.Server(app);
-const io = require('socket.io')(server);
 
-console.log(io);
-app.set('socketio', io);
 /**
  * Swagger UI Configuration
  */
@@ -70,7 +62,14 @@ app.get('/swagger.json', (req, res) => {
   res.send(swaggerSpec);
 });
 
+/**
+ * express application
+ */
+const app = express();
+const server = http.Server(app);
+const io = require('socket.io')(server, { cors: { origin: '*' } });
 
+app.set('socketio', io);
 // allow cross origin requests
 // configure to only allow requests from certain origins
 app.use(cors());
