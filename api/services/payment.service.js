@@ -145,6 +145,7 @@ exports.mpesa = async (data = {}) => {
       AccountReference: 'CompanyXLTD',
       TransactionDesc: 'Payment of X',
     };
+    console.log(CallBackURL, data)
     config.url = paymentUrl;
     config.method = 'Post';
     config.data = postData;
