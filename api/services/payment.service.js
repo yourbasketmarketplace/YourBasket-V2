@@ -141,10 +141,11 @@ exports.mpesa = async (data = {}) => {
       PartyA: `254${data.user.phone}`,
       PartyB: 174379,
       PhoneNumber: `254${data.user.phone}`,
-      CallBackURL: `https://api.yourbasket.co.ke/api/order/mpesa?user_id=${data.user_id}&address_id=${data.addressId}&amount=${data.totalAmount}&item_amount=${data.item_amount}&tax_amount=${data.tax_amount}&payment_menthod='Pesapal'`,
+      CallBackURL: `https://api.yourbasket.co.ke/api/order/mpesa?user_id=${data.user_id}&address_id=${data.addressId}&amount=${data.totalAmount}&item_amount=${data.item_amount}&tax_amount=${data.tax_amount}&payment_menthod='Mpesa'`,
       AccountReference: 'CompanyXLTD',
       TransactionDesc: 'Payment of X',
     };
+    console.log(postData.CallBackURL)
     config.url = paymentUrl;
     config.method = 'Post';
     config.data = postData;

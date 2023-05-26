@@ -55,7 +55,7 @@ const OrderController = () => {
         });
       } else if (req.body.payment_method === 'Mpesa') {
         const result = await PaymentService.mpesa(paymentData);
-        console.log(result)
+        console.log(result);
         if (result.error) {
           return res.status(400).json({
             msg: result.data,
@@ -122,18 +122,19 @@ const OrderController = () => {
   };
   const orderWithMpesa = async (req, res) => {
     // body is part of a form-data
+
+    const {
+      Cart,
+      Order,
+      Product,
+      OrderItem,
+      Paymentlog,
+    } = AllModels();
+    const logData = {};
+    logData.logbody = JSON.stringify(req.body);
+    logData.logquery = JSON.stringify(req.query);
+    await Paymentlog.create(logData);
     try {
-      const {
-        Cart,
-        Order,
-        Product,
-        OrderItem,
-        Paymentlog,
-      } = AllModels();
-      const logData = {};
-      logData.logbody = JSON.stringify(req.body);
-      logData.logquery = JSON.stringify(req.query);
-      await Paymentlog.create(logData);
       const {
         user_id, address_id,
         amount, item_amount, tax_amount,
@@ -197,7 +198,7 @@ const OrderController = () => {
         msg: 'not allowed',
       });
     } catch (err) {
-      console.log(err)
+      console.log(err);
       return res.status(500).json({
         msg: 'Internal server error',
       });
