@@ -145,7 +145,6 @@ exports.mpesa = async (data = {}) => {
       AccountReference: 'CompanyXLTD',
       TransactionDesc: 'Payment of X',
     };
-    console.log(CallBackURL, data)
     config.url = paymentUrl;
     config.method = 'Post';
     config.data = postData;
@@ -153,6 +152,7 @@ exports.mpesa = async (data = {}) => {
     const paymentData = await axios.request(config);
     return { error: false, data: paymentData.data };
   } catch (error) {
+    console.log(data)
     return { error: true, data: 'Invalid phone number' };
   }
 };
