@@ -10,7 +10,7 @@ exports.pesapal = async (data = {}) => {
     const tokenData = await axios.post('https://cybqa.pesapal.com/pesapalv3/api/Auth/RequestToken', configKey);
 
     let postdata = {
-      url: `https://api.yourbasket.co.ke/api/payment/ipn?user_id=${data.user_id}&address_id=${data.addressId}&amount=${data.totalAmount}&item_amount=${data.item_amount}&tax_amount=${data.tax_amount}&payment_menthod='Pesapal'`,
+      url: `https://api.yourbasket.co.ke/api/payment/ipn?user_id=${data.user_id}&address_id=${data.addressId}&amount=${data.totalAmount}&item_amount=${data.item_amount}&tax_amount=${data.tax_amount}&payment_menthod='Pesapal'&sale_type=${data.sale_type}`,
       ipn_notification_type: 'GET',
     };
 
@@ -141,7 +141,7 @@ exports.mpesa = async (data = {}) => {
       PartyA: `254${data.user.phone}`,
       PartyB: 174379,
       PhoneNumber: `254${data.user.phone}`,
-      CallBackURL: `https://api.yourbasket.co.ke/api/order/mpesa?user_id=${data.user_id}&address_id=${data.addressId}&amount=${data.totalAmount}&item_amount=${data.item_amount}&tax_amount=${data.tax_amount}&payment_menthod='Mpesa'`,
+      CallBackURL: `https://api.yourbasket.co.ke/api/order/mpesa?user_id=${data.user_id}&address_id=${data.addressId}&amount=${data.totalAmount}&item_amount=${data.item_amount}&tax_amount=${data.tax_amount}&payment_menthod='Mpesa'&sale_type=${data.sale_type}`,
       AccountReference: 'CompanyXLTD',
       TransactionDesc: 'Payment of X',
     };

@@ -15,6 +15,7 @@ const OrderController = () => {
     // body is part of a form-data
     const {
       Cart,
+      Tempcart,
       Order,
       Product,
       OrderItem,
@@ -41,6 +42,7 @@ const OrderController = () => {
         item_amount: req.body.item_amount,
         tax_amount: req.body.tax_amount,
         payment_method: req.body.payment_method,
+        sale_type: (req.body.sale_type) ? req.body.sale_type : 'cart',
         user,
       };
       if (req.body.payment_method === 'Pesapal') {
@@ -55,7 +57,6 @@ const OrderController = () => {
         });
       } else if (req.body.payment_method === 'Mpesa') {
         const result = await PaymentService.mpesa(paymentData);
-        console.log(result);
         if (result.error) {
           return res.status(400).json({
             msg: result.data,
@@ -68,20 +69,41 @@ const OrderController = () => {
         orderContinue = true;
       }
       if (orderContinue) {
-        const cartData = await Cart.findAll({
-          where: {
-            user_id: userInfo.id,
-            status: 'active',
-          },
-          include: [
-            {
-              model: Product,
-              attribute: ['vendor_id'],
+        let cartData;
+        if (req.body.sale_type && req.body.sale_type === 'buynow') {
+          cartData = await Tempcart.findAll({
+            where: {
+              user_id: userInfo.id,
+              status: 'active',
             },
-          ],
-        });
+            include: [
+              {
+                model: Product,
+                attribute: ['vendor_id'],
+              },
+            ],
+          });
+        } else {
+          cartData = await Cart.findAll({
+            where: {
+              user_id: userInfo.id,
+              status: 'active',
+            },
+            include: [
+              {
+                model: Product,
+                attribute: ['vendor_id'],
+              },
+            ],
+          });
+        }
+
         if (cartData.length) {
           req.body.user_id = userInfo.id;
+          if (req.body.sale_type) {
+            delete (req.body.sale_type);
+          }
+
           const orderCreated = await Order.create(req.body);
           const orderItemdata = cartData.map((row) => ({
             price: row.price,
@@ -125,6 +147,7 @@ const OrderController = () => {
 
     const {
       Cart,
+      Tempcart,
       Order,
       Product,
       OrderItem,
@@ -137,25 +160,41 @@ const OrderController = () => {
     try {
       const {
         user_id, address_id,
-        amount, item_amount, tax_amount,
+        amount, item_amount, tax_amount, sale_type,
       } = req.query;
       const { stkCallback } = req.body.Body;
       const io = req.app.get('socketio');
       io.emit('paymentstatus', { data: stkCallback, user_id });
 
       if (user_id && address_id && stkCallback.ResultCode === 0) {
-        const cartData = await Cart.findAll({
-          where: {
-            user_id,
-            status: 'active',
-          },
-          include: [
-            {
-              model: Product,
-              attribute: ['vendor_id'],
+        let cartData;
+        if (sale_type && sale_type === 'buynow') {
+          cartData = await Tempcart.findAll({
+            where: {
+              user_id,
+              status: 'active',
             },
-          ],
-        });
+            include: [
+              {
+                model: Product,
+                attribute: ['vendor_id'],
+              },
+            ],
+          });
+        } else {
+          cartData = await Cart.findAll({
+            where: {
+              user_id,
+              status: 'active',
+            },
+            include: [
+              {
+                model: Product,
+                attribute: ['vendor_id'],
+              },
+            ],
+          });
+        }
         if (cartData.length) {
           req.body.user_id = user_id;
           req.body.address_id = address_id;
@@ -362,29 +401,46 @@ const OrderController = () => {
     try {
       const {
         Cart,
+        Tempcart,
         Order,
         Product,
         OrderItem,
       } = AllModels();
       const {
         user_id, address_id, OrderTrackingId, OrderMerchantReference,
-        amount, item_amount, tax_amount,
+        amount, item_amount, tax_amount, sale_type,
       } = req.query;
       if (user_id && address_id && OrderTrackingId && OrderMerchantReference && amount) {
         const result = await PaymentService.pesapalTransactionSatus(OrderTrackingId);
         console.log(result.data);
-        const cartData = await Cart.findAll({
-          where: {
-            user_id,
-            status: 'active',
-          },
-          include: [
-            {
-              model: Product,
-              attribute: ['vendor_id'],
+        let cartData;
+        if (sale_type && sale_type === 'buynow') {
+          cartData = await Tempcart.findAll({
+            where: {
+              user_id,
+              status: 'active',
             },
-          ],
-        });
+            include: [
+              {
+                model: Product,
+                attribute: ['vendor_id'],
+              },
+            ],
+          });
+        } else {
+          cartData = await Cart.findAll({
+            where: {
+              user_id,
+              status: 'active',
+            },
+            include: [
+              {
+                model: Product,
+                attribute: ['vendor_id'],
+              },
+            ],
+          });
+        }
         if (cartData.length) {
           req.body.user_id = user_id;
           req.body.address_id = address_id;

@@ -93,7 +93,6 @@ const CartController = () => {
         data,
       });
     } catch (err) {
-      console.log(err);
       return res.status(500).json({
         msg: err,
       });
@@ -101,8 +100,10 @@ const CartController = () => {
   };
   const getAll = async (req, res) => {
     try {
-      const { Cart, Product, Brand } = AllModels();
-      const { type } = req.query;
+      const {
+        Cart, Tempcart, Product, Brand,
+      } = AllModels();
+      const { type, option } = req.query;
       const userInfo = req.token;
       const query = {
         where: {
@@ -124,13 +125,17 @@ const CartController = () => {
           },
         ],
       };
+      let data;
+      if (option && option === 'buynow') {
+        data = await Tempcart.findAll(query);
+      } else {
+        data = await Cart.findAll(query);
+      }
 
-      const data = await Cart.findAll(query);
       return res.status(200).json({
         data,
       });
     } catch (err) {
-      console.log(err);
       return res.status(500).json({
         msg: 'Internal server error',
       });
