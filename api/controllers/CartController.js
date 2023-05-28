@@ -50,7 +50,7 @@ const CartController = () => {
         data,
       });
     } catch (err) {
-      console.log(err)
+      console.log(err);
       return res.status(500).json({
         msg: err,
       });
@@ -72,8 +72,6 @@ const CartController = () => {
       const cartExist = await Tempcart.findOne({
         where: {
           user_id: userInfo.id,
-          product_id: req.body.product_id,
-          variant: req.body.variant,
         },
       });
       if (cartExist) {
@@ -82,8 +80,8 @@ const CartController = () => {
             user_id: userInfo.id,
           },
         });
-      } 
-     const data = await Tempcart.create(req.body);
+      }
+      const data = await Tempcart.create(req.body);
 
       if (!data) {
         return res.status(400).json({
@@ -95,6 +93,7 @@ const CartController = () => {
         data,
       });
     } catch (err) {
+      console.log(err);
       return res.status(500).json({
         msg: err,
       });
