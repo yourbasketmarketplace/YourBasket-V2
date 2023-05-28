@@ -56,7 +56,50 @@ const CartController = () => {
       });
     }
   };
+  // for buy  now add product to tempcart
+  const tempCreate = async (req, res) => {
+    // body is part of a form-data
+    const { Tempcart } = AllModels();
+    const userInfo = req.token;
+    try {
+      const reuireFiled = ['price', 'product_id', 'quantity'];
 
+      const checkField = helperService.checkRequiredParameter(reuireFiled, req.body);
+      if (checkField.isMissingParam) {
+        return res.status(400).json({ msg: checkField.message });
+      }
+      req.body.user_id = userInfo.id;
+      const cartExist = await Tempcart.findOne({
+        where: {
+          user_id: userInfo.id,
+          product_id: req.body.product_id,
+          variant: req.body.variant,
+        },
+      });
+      if (cartExist) {
+        await Tempcart.destroy({
+          where: {
+            user_id: userInfo.id,
+          },
+        });
+      } 
+     const data = await Tempcart.create(req.body);
+
+      if (!data) {
+        return res.status(400).json({
+          msg: 'Bad Request: Model not found',
+        });
+      }
+
+      return res.status(200).json({
+        data,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        msg: err,
+      });
+    }
+  };
   const getAll = async (req, res) => {
     try {
       const { Cart, Product, Brand } = AllModels();
@@ -206,6 +249,7 @@ const CartController = () => {
     get,
     update,
     destroy,
+    tempCreate,
   };
 };
 

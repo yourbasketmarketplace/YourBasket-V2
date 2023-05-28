@@ -46,6 +46,8 @@ const auth = require('../policies/auth.policy');
 
 router.post('/', auth, (req, res) => CartContoller().create(req, res));
 
+router.post('/temp', auth, (req, res) => CartContoller().tempCreate(req, res));
+
 /**
  * @swagger
  * /api/cart:
