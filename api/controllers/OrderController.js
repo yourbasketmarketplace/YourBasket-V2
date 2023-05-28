@@ -118,11 +118,21 @@ const OrderController = () => {
 
           if (orderCreated) {
             await OrderItem.bulkCreate(orderItemdata);
-            await Cart.destroy({
-              where: {
-                user_id: userInfo.id,
-              },
-            });
+            if (req.body.sale_type && req.body.sale_type === 'buynow') {
+              await Tempcart.destroy({
+                where: {
+                  user_id: userInfo.id,
+                },
+              });
+            } else {
+              await Cart.destroy({
+                where: {
+                  user_id: userInfo.id,
+                },
+              });
+            }
+
+
             return res.status(200).json({
               orderCreated,
             });
@@ -219,11 +229,19 @@ const OrderController = () => {
           if (orderCreated) {
             try {
               await OrderItem.bulkCreate(orderItemdata);
-              await Cart.destroy({
-                where: {
-                  user_id,
-                },
-              });
+              if (sale_type && sale_type === 'buynow') {
+                await Tempcart.destroy({
+                  where: {
+                    user_id,
+                  },
+                });
+              } else {
+                await Cart.destroy({
+                  where: {
+                    user_id,
+                  },
+                });
+              }
             } catch (err) {
               console.log(err);
             }
@@ -462,15 +480,22 @@ const OrderController = () => {
             product_id: row.Product.id,
             order_id: orderCreated.id,
           }));
-          console.log(orderItemdata);
           if (orderCreated) {
             try {
               await OrderItem.bulkCreate(orderItemdata);
-              await Cart.destroy({
-                where: {
-                  user_id,
-                },
-              });
+              if (sale_type && sale_type === 'buynow') {
+                await Tempcart.destroy({
+                  where: {
+                    user_id,
+                  },
+                });
+              } else {
+                await Cart.destroy({
+                  where: {
+                    user_id,
+                  },
+                });
+              }
             } catch (err) {
               console.log(err);
             }
