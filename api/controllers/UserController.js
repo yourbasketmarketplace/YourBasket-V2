@@ -346,7 +346,67 @@ const UserController = () => {
     }
     return res.status(400).json({ msg: 'You are not authorized to access this page' });
   };
+   /**
+ * @description: Change password
+ * @param {*} req
+ * @param {*} res
+ * @returns
+ */
+   const changePassword = async (req, res) => {
+    const { User } = AllModels();
+    // eslint-disable-next-line camelcase
+    const { password, old_password } = req.body;
+    const tokenToVerify = req.headers.authorization.replace('Bearer ', '');
+    authService().verify(tokenToVerify, async (err, data) => {
+      if (err) {
+        return res.status(401).json({ success: false, msg: 'Invalid Token!' });
+      }
 
+      if (data.id) {
+        try {
+          const user = await User
+            .findOne({
+              where: {
+                id: data.id,
+              },
+            });
+
+          if (!user) {
+            return res.status(400).json({ success: false, msg: 'User not found' });
+          }
+
+
+          const userId = user.id;
+          if (bcryptService().comparePassword(old_password, user.password)) {
+            // new passwordca not be same as old password
+            if (bcryptService().comparePassword(password, user.password)) {
+              return res.status(400).json({ success: false, msg: 'New password can not be same as old password' });
+            }
+            const newEncryptedPass = bcryptService().password({ password });
+            const updated = await User
+              .update(
+                {
+                  password: newEncryptedPass,
+                  login_first_time: '0',
+                },
+                { where: { id: userId } },
+              );
+
+            if (!updated) {
+              return res.status(400).json({ success: false, msg: 'Problem in updating' });
+            }
+            return res.status(200).json({ success: true, msg: 'Password changed successfully' });
+          }
+
+          return res.status(400).json({ success: false, msg: 'Old Password don\'t match' });
+        } catch (error) {
+          return res.status(500).json({ success: false, msg: 'Internal server error' });
+        }
+      }
+
+      return res.status(400).json({ success: false, msg: 'Token is expired' });
+    });
+  };
   return {
     register,
     login,
@@ -359,6 +419,7 @@ const UserController = () => {
     getUserDetail,
     updateUserDetail,
     forgotPassword,
+    changePassword,
   };
 };
 
