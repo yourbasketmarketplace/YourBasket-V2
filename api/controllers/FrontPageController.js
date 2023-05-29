@@ -82,11 +82,25 @@ const ProductController = () => {
           ['id', 'DESC'],
         ],
       });
+      const electronics = await Category.findAll({
+        where: {
+          status: {
+            [Op.ne]: 'inactive',
+          },
+          id: {
+            [Op.in]: [31, 51, 100],
+          },
+        },
+        order: [
+          ['id', 'DESC'],
+        ],
+      });
       return res.status(200).json({
         products,
         brands,
         categories,
         masterCategories,
+        electronics,
       });
     } catch (err) {
       return res.status(500).json({
