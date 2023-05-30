@@ -8,15 +8,19 @@ const AllModels = require('../services/model.service');
 const UserFieldController = () => {
   const create = async (req, res) => {
     // body is part of a form-data
-    const { UserField } = AllModels();
+    const { UserField, VendorField } = AllModels();
 
     try {
       let data;
-      const userFiled = await UserField.findOne({});
+      let modelName = UserField;
+      if (req.query.type && req.query.type === 'vendor') {
+        modelName = VendorField;
+      }
+      const userFiled = await modelName.findOne({});
       if (userFiled) {
         const { id } = req.body;
         delete (req.body.id);
-        data = await UserField.update(
+        data = await modelName.update(
           req.body,
           {
             where: {
@@ -25,7 +29,7 @@ const UserFieldController = () => {
           },
         );
       } else {
-        data = await UserField.create(req.body);
+        data = await modelName.create(req.body);
       }
 
       if (!data) {
@@ -45,10 +49,10 @@ const UserFieldController = () => {
   };
   const get = async (req, res) => {
     // params is part of an url
-    const { UserField } = AllModels();
+    const { UserField, VendorField } = AllModels();
     try {
       const data = await UserField.findOne();
-
+      const vendorData = await VendorField.findOne();
       if (!data) {
         return res.status(400).json({
           msg: 'Bad Request: Model not found',
@@ -57,6 +61,7 @@ const UserFieldController = () => {
 
       return res.status(200).json({
         data,
+        vendorData,
       });
     } catch (err) {
       // better save it to log file

@@ -13,6 +13,7 @@ const OrderItem = require('../models/OrdeItem');
 const Paymentlog = require('../models/Paymentlog');
 const Tempcart = require('../models/Tempcart');
 const UserField = require('../models/UserField');
+const VendorField = require('../models/VendorField');
 
 const AllModels = () => ({
   User,
@@ -30,6 +31,7 @@ const AllModels = () => ({
   Paymentlog,
   Tempcart,
   UserField,
+  VendorField,
 });
 
 module.exports = AllModels;
