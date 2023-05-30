@@ -89,22 +89,47 @@ const CategoryController = () => {
     const { id } = req.params;
 
     try {
-      const category = await Category.findOne({
+      const cateoryType = await Category.findOne({
         where: {
           id,
         },
-        include: [
-          {
-            model: Category,
-            include: [
-              {
-                model: Category,
-              },
-            ],
-          },
-        ],
       });
-
+      let category;
+      if (cateoryType.type !== '0') {
+        category = await Category.findOne({
+          where: {
+            id,
+          },
+          include: [
+            {
+              model: Category,
+              as: 'parentcategory',
+              include: [
+                {
+                  model: Category,
+                  as: 'parentcategory',
+                },
+              ],
+            },
+          ],
+        });
+      } else {
+        category = await Category.findOne({
+          where: {
+            id,
+          },
+          include: [
+            {
+              model: Category,
+              include: [
+                {
+                  model: Category,
+                },
+              ],
+            },
+          ],
+        });
+      }
       if (!category) {
         return res.status(400).json({
           msg: 'Bad Request: Model not found',
@@ -115,6 +140,7 @@ const CategoryController = () => {
         category,
       });
     } catch (err) {
+      console.log(err);
       // better save it to log file
       return res.status(500).json({
         msg: 'Internal server error',
