@@ -31,7 +31,8 @@ exports.set_routes = (app) => {
   const order = require('../api/routes/orders');
   // eslint-disable-next-line global-require
   const payment = require('../api/routes/payment');
-
+  // eslint-disable-next-line global-require
+  const userfiled = require('../api/routes/userfield');
 
   app.use('/api/users', users);
   app.use('/api/categories', categories);
@@ -47,4 +48,5 @@ exports.set_routes = (app) => {
   app.use('/api/front', front);
   app.use('/api/order', order);
   app.use('/api/payment', payment);
+  app.use('/api/userfield', userfiled);
 };

@@ -87,7 +87,7 @@ const User = sequelize.define(
     },
     status: {
       type: Sequelize.ENUM,
-      values: ['active', 'deleted', 'approved', 'reject', 'pending'],
+      values: ['active', 'deleted', 'inactive', 'approved', 'reject', 'pending'],
       defaultValue: 'pending',
     },
   },
