@@ -68,6 +68,9 @@ const User = sequelize.define(
     referral_name: {
       type: Sequelize.STRING,
     },
+    company_name: {
+      type: Sequelize.STRING,
+    },
     file_name: {
       type: Sequelize.STRING,
     },

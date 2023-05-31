@@ -21,16 +21,24 @@ const UserController = () => {
       return res.status(400).json({ msg: checkField.message });
     }
     if (req.body.role === 'admin') {
-      return res.status(400).json({ msg: 'Bad Request: Passwords don\'t match' });
+      return res.status(400).json({ msg: 'Bad Request: Not allowed' });
     }
     if (body.password === body.password2) {
       try {
         const user = await User.create({
           email: body.email,
           password: body.password,
+          phone: body.phone,
           first_name: body.first_name,
           last_name: body.last_name,
           user_name: (body.user_name) ? body.user_name : body.email,
+          middle_name: (body.middle_name) ? body.middle_name : '',
+          address: (body.address) ? body.address : '',
+          website_link: (body.website_link) ? body.website_link : '',
+          state: (body.state) ? body.state : '',
+          city: (body.city) ? body.city : '',
+          company_name: (body.company_name) ? body.company_name : '',
+          referral_name: (body.referral_name) ? body.referral_name : '',
           role: body.role,
           status: body.role === 'user' ? 'active' : 'pending',
         });
@@ -38,7 +46,7 @@ const UserController = () => {
 
         return res.status(200).json({ token, user });
       } catch (err) {
-        return res.status(500).json({ msg: 'Internal server error' });
+        return res.status(500).json({ msg: err.errors[0].message });
       }
     }
 
@@ -346,13 +354,13 @@ const UserController = () => {
     }
     return res.status(400).json({ msg: 'You are not authorized to access this page' });
   };
-   /**
+  /**
  * @description: Change password
  * @param {*} req
  * @param {*} res
  * @returns
  */
-   const changePassword = async (req, res) => {
+  const changePassword = async (req, res) => {
     const { User } = AllModels();
     // eslint-disable-next-line camelcase
     const { password, old_password } = req.body;
