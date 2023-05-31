@@ -79,7 +79,7 @@ const ProductController = () => {
           },
         ],
         order: [
-          ['id', 'DESC'],
+          ['id', 'ASC'],
         ],
       });
       const electronics = await Category.findAll({
