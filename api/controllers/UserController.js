@@ -133,6 +133,7 @@ const UserController = () => {
 
         return res.status(403).json({ msg: 'Unauthorized' });
       } catch (err) {
+        console.log(err)
         return res.status(500).json({ msg: 'Internal server error' });
       }
     }

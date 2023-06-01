@@ -1,6 +1,10 @@
 // eslint-disable-next-line no-unused-vars
 const { Op } = require('sequelize');
 const AllModels = require('../services/model.service');
+
+const accountSid = 'AC2df654ce9696b6c0c34e68febbecd139';
+const authToken = 'cbd2088b1830d1206db0a47a2c5f9483';
+const client = require('twilio')(accountSid, authToken);
 /** ****************************************************************************
  *                              Front page controller to load data on home page
  ***************************************************************************** */
@@ -170,16 +174,83 @@ const ProductController = () => {
         products,
       });
     } catch (err) {
-      console.log(err);
+      return res.status(500).json({
+        msg: 'Internal server error',
+      });
+    }
+  };
+  const sendOtp = async (req, res) => {
+    try {
+      const token = req.body.apikey ? req.body.apikey : null;
+      const userInfo = req.token;
+      const { User } = AllModels();
+      if (!token || token !== 'yourbasket2023') {
+        return res.status(400).json({
+          msg: 'Internal server error',
+        });
+      }
+      const digits = '0123456789';
+      let OTP = '';
+      // eslint-disable-next-line no-plusplus
+      for (let i = 0; i < 4; i++) {
+        OTP += digits[Math.floor(Math.random() * 10)];
+      }
+      client.messages
+        .create({
+          body: `yourbasket otp to confirm your checkout process ${OTP}`,
+          from: '+12542724698',
+          to: '+254790705672',
+        })
+      // eslint-disable-next-line no-unused-vars
+        .then((message) => {
+          User.update(
+            { otp: OTP },
+            // eslint-disable-next-line no-unused-vars
+            { where: { id: userInfo.id } },
+          );
+          return res.status(200).json({
+            msg: 'otp sent',
+          });
+        })
+        .catch((e) => {
+          res.status(500).json({
+            msg: e,
+          });
+        });
+    } catch (error) {
       return res.status(500).json({
         msg: 'Internal server error',
       });
     }
   };
 
+  const verifyOtp = async (req, res) => {
+    try {
+      const userInfo = req.token;
+      const { User } = AllModels();
+      const user = await User
+        .findOne({
+          where: {
+            id: userInfo.id,
+            otp: req.body.otp,
+          },
+        });
+
+      if (!user) {
+        return res.status(400).json({ msg: 'invalid otp' });
+      }
+      return res.status(200).json({ user });
+    } catch (error) {
+      return res.status(500).json({
+        msg: 'Internal server error',
+      });
+    }
+  };
   return {
     getAll,
     searchProduct,
+    sendOtp,
+    verifyOtp,
   };
 };
 
