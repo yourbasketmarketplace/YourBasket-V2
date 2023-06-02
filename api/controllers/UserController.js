@@ -4,11 +4,10 @@ const bcryptService = require('../services/bcrypt.service');
 const helperService = require('../services/helper.service');
 const AWS = require('aws-sdk');
 
-AWS.config.update({
-  region: 'us-east-1',
-  accessKeyId: 'AKIAWZDHY66FRJXCE5UK',
-  secretAccessKey: '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',
-});
+const accountSid = 'AC2df654ce9696b6c0c34e68febbecd139';
+const authToken = 'cbd2088b1830d1206db0a47a2c5f9483';
+const client = require('twilio')(accountSid, authToken);
+
 
 const UserController = () => {
   const register = async (req, res) => {
@@ -133,7 +132,7 @@ const UserController = () => {
 
         return res.status(403).json({ msg: 'Unauthorized' });
       } catch (err) {
-        console.log(err)
+        console.log(err);
         return res.status(500).json({ msg: 'Internal server error' });
       }
     }
@@ -165,27 +164,30 @@ const UserController = () => {
         const mobileNo = '+918264350533';
         // eslint-disable-next-line no-mixed-operators
         const OTP = Math.floor(Math.random() * ((1000 - 9999) + 9999));
-        const params = {
-          Message: `Welcome! your mobile verification code is: ${OTP}   Mobile Number is:8360047165`,
-          PhoneNumber: mobileNo,
-        };
-        await new AWS.SNS({ apiVersion: '2010-03-31' })
-          .publish(params).promise()
-          .then((data) => {
+        client.messages
+          .create({
+            body: `Welcome! your mobile verification code is: ${OTP}`,
+            from: '+12542724698',
+            to: `+254${userInfo.phone}`,
+          })
+        // eslint-disable-next-line no-unused-vars
+          .then((message) => {
             User.update(
-              {
-                otp: OTP,
-                token_expire_time: Date.now() + 3600000, // 1 hour,
-              },
+              { otp: OTP },
+              // eslint-disable-next-line no-unused-vars
               { where: { id: userInfo.id } },
             );
-            res.status(200).json({ msg: 'Successs', data });
+            return res.status(200).json({
+              msg: 'otp sent',
+            });
           })
-          // eslint-disable-next-line no-unused-vars
-          .catch((err) => res.status(500).json({ msg: 'Oops something went wrong!' }));
-        // if email sent out create a record in invite table
+          .catch((e) => {
+            res.status(500).json({
+              msg: e,
+            });
+          });
+        return res.status(400).json({ msg: 'Invalid email address' });
       }
-      return res.status(400).json({ msg: 'Invalid email address' });
     } catch (error) {
       return res.status(500).json({ msg: 'Oops something went wrong!' });
     }
@@ -365,56 +367,44 @@ const UserController = () => {
     const { User } = AllModels();
     // eslint-disable-next-line camelcase
     const { password, old_password } = req.body;
-    const tokenToVerify = req.headers.authorization.replace('Bearer ', '');
-    authService().verify(tokenToVerify, async (err, data) => {
-      if (err) {
-        return res.status(401).json({ success: false, msg: 'Invalid Token!' });
+    const userInfo = req.token;
+    try {
+      const user = await User
+        .findOne({
+          where: {
+            id: userInfo.id,
+          },
+        });
+
+      if (!user) {
+        return res.status(400).json({ success: false, msg: 'User not found' });
       }
-
-      if (data.id) {
-        try {
-          const user = await User
-            .findOne({
-              where: {
-                id: data.id,
-              },
-            });
-
-          if (!user) {
-            return res.status(400).json({ success: false, msg: 'User not found' });
-          }
-
-
-          const userId = user.id;
-          if (bcryptService().comparePassword(old_password, user.password)) {
-            // new passwordca not be same as old password
-            if (bcryptService().comparePassword(password, user.password)) {
-              return res.status(400).json({ success: false, msg: 'New password can not be same as old password' });
-            }
-            const newEncryptedPass = bcryptService().password({ password });
-            const updated = await User
-              .update(
-                {
-                  password: newEncryptedPass,
-                  login_first_time: '0',
-                },
-                { where: { id: userId } },
-              );
-
-            if (!updated) {
-              return res.status(400).json({ success: false, msg: 'Problem in updating' });
-            }
-            return res.status(200).json({ success: true, msg: 'Password changed successfully' });
-          }
-
-          return res.status(400).json({ success: false, msg: 'Old Password don\'t match' });
-        } catch (error) {
-          return res.status(500).json({ success: false, msg: 'Internal server error' });
+      const userId = userInfo.id;
+      if (bcryptService().comparePassword(old_password, user.password)) {
+        // new passwordca not be same as old password
+        if (bcryptService().comparePassword(password, user.password)) {
+          return res.status(400).json({ success: false, msg: 'New password can not be same as old password' });
         }
+        const newEncryptedPass = bcryptService().password({ password });
+        const updated = await User
+          .update(
+            {
+              password: newEncryptedPass,
+              login_first_time: '0',
+            },
+            { where: { id: userId } },
+          );
+
+        if (!updated) {
+          return res.status(400).json({ success: false, msg: 'Problem in updating' });
+        }
+        return res.status(200).json({ success: true, msg: 'Password changed successfully' });
       }
 
-      return res.status(400).json({ success: false, msg: 'Token is expired' });
-    });
+      return res.status(400).json({ success: false, msg: 'Old Password don\'t match' });
+    } catch (error) {
+      return res.status(500).json({ success: false, msg: 'Internal server error' });
+    }
   };
   return {
     register,
