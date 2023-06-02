@@ -48,7 +48,7 @@ const ProductController = () => {
         category,
       });
     } catch (err) {
-      console.log(err)
+      console.log(err);
       return res.status(500).json({
         msg: err.errors[0].message,
       });
@@ -113,6 +113,7 @@ const ProductController = () => {
       Brand,
       User,
       Review,
+      Cart,
     } = AllModels();
     try {
       const category = await Product.findOne({
@@ -151,6 +152,23 @@ const ProductController = () => {
       if (userInfo && userInfo.role === 'admin') {
         // continue
       } else {
+        const { userId } = req.query;
+        let include = [];
+        if (userId) {
+          include = [
+            {
+              model: Cart,
+              seprate: true,
+              attribute: ['product_id'],
+              where: {
+                type: 'whislist',
+                status: 'active',
+                user_id: userId,
+              },
+              required: false,
+            },
+          ];
+        }
         relatedProducts = await Product.findAll({
           where: {
             category_id: category.category_id,
@@ -159,6 +177,7 @@ const ProductController = () => {
             },
             status: 'Published',
           },
+          include,
         });
         Products = await Product.findAll({
           where: {
@@ -167,6 +186,7 @@ const ProductController = () => {
               [Op.ne]: category.id,
             },
           },
+          include,
         });
         reviews = await Review.findAll({
           where: {
@@ -201,7 +221,7 @@ const ProductController = () => {
         reviewsCount,
       });
     } catch (err) {
-      console.log(err)
+      console.log(err);
       // better save it to log file
       return res.status(500).json({
         msg: err,

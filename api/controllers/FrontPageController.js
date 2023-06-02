@@ -115,6 +115,7 @@ const ProductController = () => {
   const searchProduct = async (req, res) => {
     const {
       Product,
+      Cart,
     } = AllModels();
     try {
       let condition = {
@@ -163,9 +164,26 @@ const ProductController = () => {
           [Op.gte]: req.body.maxPrice,
         };
       }
-
+      const { userId } = req.query;
+      let include = [];
+      if (userId) {
+        include = [
+          {
+            model: Cart,
+            seprate: true,
+            attribute: ['product_id'],
+            where: {
+              type: 'whislist',
+              status: 'active',
+              user_id: userId,
+            },
+            required: false,
+          },
+        ];
+      }
       const products = await Product.findAll({
         where: condition,
+        include,
         order: [
           ['id', 'DESC'],
         ],
