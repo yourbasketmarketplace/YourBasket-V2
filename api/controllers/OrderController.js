@@ -100,6 +100,7 @@ const OrderController = () => {
 
         if (cartData.length) {
           req.body.user_id = userInfo.id;
+          const saleType = req.body.sale_type;
           if (req.body.sale_type) {
             delete (req.body.sale_type);
           }
@@ -118,7 +119,7 @@ const OrderController = () => {
 
           if (orderCreated) {
             await OrderItem.bulkCreate(orderItemdata);
-            if (req.body.sale_type && req.body.sale_type === 'buynow') {
+            if (saleType && saleType === 'buynow') {
               await Tempcart.destroy({
                 where: {
                   user_id: userInfo.id,
@@ -131,8 +132,6 @@ const OrderController = () => {
                 },
               });
             }
-
-
             return res.status(200).json({
               orderCreated,
             });
