@@ -2,7 +2,7 @@ const AllModels = require('../services/model.service');
 const authService = require('../services/auth.service');
 const bcryptService = require('../services/bcrypt.service');
 const helperService = require('../services/helper.service');
-const AWS = require('aws-sdk');
+const crypto = require('crypto');
 
 const accountSid = 'AC2df654ce9696b6c0c34e68febbecd139';
 const authToken = 'cbd2088b1830d1206db0a47a2c5f9483';
@@ -161,9 +161,9 @@ const UserController = () => {
         },
       });
       if (userInfo) {
-        const mobileNo = '+918264350533';
         // eslint-disable-next-line no-mixed-operators
         const OTP = Math.floor(Math.random() * ((1000 - 9999) + 9999));
+        const token = crypto.randomBytes(Math.ceil(60 / 2)).toString('hex').slice(0, 60);
         client.messages
           .create({
             body: `Welcome! your mobile verification code is: ${OTP}`,
@@ -173,7 +173,11 @@ const UserController = () => {
         // eslint-disable-next-line no-unused-vars
           .then((message) => {
             User.update(
-              { otp: OTP },
+              {
+                otp: OTP,
+                reset_password_token: token,
+                token_expire_time: Date.now() + 3600000, // 1 hour,
+              },
               // eslint-disable-next-line no-unused-vars
               { where: { id: userInfo.id } },
             );
@@ -188,6 +192,7 @@ const UserController = () => {
           });
         return res.status(400).json({ msg: 'Invalid email address' });
       }
+      return res.status(200).json({ });
     } catch (error) {
       return res.status(500).json({ msg: 'Oops something went wrong!' });
     }
