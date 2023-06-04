@@ -12,6 +12,9 @@ const CategoryController = () => {
       const categoryExist = await Category.findOne({
         where: {
           name: req.body.name,
+          status: {
+            [Op.ne]: 'inactive',
+          },
         },
       });
       if (categoryExist) {
