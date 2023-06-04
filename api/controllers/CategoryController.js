@@ -63,9 +63,7 @@ const CategoryController = () => {
               ],
             },
           ],
-          order: [
-            ['id', 'DESC'],
-          ],
+
         };
       }
       if (front && front === 'yes') {
@@ -73,6 +71,10 @@ const CategoryController = () => {
         query.where.status = {
           [Op.ne]: 'inactive',
         };
+      } else {
+        query.order = [
+          ['id', 'DESC'],
+        ];
       }
       const categories = await Category.findAll(query);
       return res.status(200).json({
