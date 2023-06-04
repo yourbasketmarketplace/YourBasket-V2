@@ -30,6 +30,7 @@ const CategoryController = () => {
   const getAll = async (req, res) => {
     try {
       const { type } = req.query;
+      const { front } = req.query;
       const userInfo = req.token;
 
       let query = {
@@ -67,7 +68,7 @@ const CategoryController = () => {
           ],
         };
       }
-      if (userInfo && userInfo.role === 'user') {
+      if (front && front === 'yes') {
         // continue
         query.where.status = {
           [Op.ne]: 'inactive',
