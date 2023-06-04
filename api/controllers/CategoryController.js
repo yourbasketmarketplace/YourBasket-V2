@@ -30,6 +30,8 @@ const CategoryController = () => {
   const getAll = async (req, res) => {
     try {
       const { type } = req.query;
+      const userInfo = req.token;
+
       let query = {
         order: [
           ['id', 'DESC'],
@@ -63,6 +65,12 @@ const CategoryController = () => {
           order: [
             ['id', 'DESC'],
           ],
+        };
+      }
+      if (userInfo && userInfo.role === 'user') {
+        // continue
+        query.where.status = {
+          [Op.ne]: 'inactive',
         };
       }
       const categories = await Category.findAll(query);
