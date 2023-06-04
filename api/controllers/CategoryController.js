@@ -9,6 +9,14 @@ const CategoryController = () => {
         req.body.file_name = req.file.filename;
         req.body.file_path = req.file.path.replace('public/', '');
       }
+      const categoryExist = await Category.findOne({
+        where: {
+          name: req.body.name,
+        },
+      });
+      if (categoryExist) {
+        return res.status(500).json({ msg: 'Category name already exists' });
+      }
       const category = await Category.create(req.body);
 
       if (!category) {
