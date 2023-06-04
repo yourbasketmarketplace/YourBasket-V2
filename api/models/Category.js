@@ -7,7 +7,7 @@ const tableName = 'categories';
 const Category = sequelize.define('Category', {
   name: {
     type: Sequelize.STRING,
-    unique: false,
+    unique: true,
   },
   file_name: {
     type: Sequelize.STRING,

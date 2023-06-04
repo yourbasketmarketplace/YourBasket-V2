@@ -21,9 +21,7 @@ const CategoryController = () => {
         category,
       });
     } catch (err) {
-      return res.status(500).json({
-        msg: 'Internal server error',
-      });
+      return res.status(500).json({ msg: err.errors[0].message });
     }
   };
 
