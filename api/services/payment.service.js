@@ -205,10 +205,10 @@ exports.ipay = async (data = {}) => {
     eml: data.user.email,
     vid: 'demo',
     curr: 'KES',
-    p1: 'airtel',
-    p2: '020102292999',
+    p1: '',
+    p2: '',
     p3: '',
-    p4: '900',
+    p4: '',
     cst: 1,
     cbk: `https://api.yourbasket.co.ke/api/order/ipayafrica?user_id=${data.user_id}&address_id=${data.addressId}&amount=${data.totalAmount}&item_amount=${data.item_amount}&tax_amount=${data.tax_amount}&payment_menthod='Mpesa'&sale_type=${data.sale_type}`,
   };
