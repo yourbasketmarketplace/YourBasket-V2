@@ -1,5 +1,6 @@
 const axios = require('axios');
 const moment = require('moment');
+const CryptoJS = require('crypto-js');
 
 exports.pesapal = async (data = {}) => {
   const configKey = {
@@ -145,7 +146,6 @@ exports.mpesa = async (data = {}) => {
       AccountReference: 'CompanyXLTD',
       TransactionDesc: 'Payment of X',
     };
-    console.log(postData.CallBackURL)
     config.url = paymentUrl;
     config.method = 'Post';
     config.data = postData;
@@ -153,7 +153,6 @@ exports.mpesa = async (data = {}) => {
     const paymentData = await axios.request(config);
     return { error: false, data: paymentData.data };
   } catch (error) {
-    console.log(data)
     return { error: true, data: 'Invalid phone number' };
   }
 };
@@ -191,6 +190,41 @@ exports.mpesaQuery = async (CheckoutRequestID = {}) => {
     return { error: false, data: paymentData.data };
   } catch (error) {
     return { error: true, data: error };
+  }
+};
+exports.ipay = async (data = {}) => {
+  const invNumber = moment().format('YYYYMMDDHHmmss');
+  const apiUrl = 'https://apis.ipayafrica.com/payments/v2/transact';
+  const hashKey = 'demoCHANGED';
+  const params = {
+    live: 0,
+    oid: `ORD122${invNumber}`,
+    inv: invNumber,
+    amount: (data.totalAmount) ? data.totalAmount : 1,
+    tel: `254${data.user.phone}`,
+    eml: data.user.email,
+    vid: 'demo',
+    curr: 'KES',
+    p1: 'airtel',
+    p2: '020102292999',
+    p3: '',
+    p4: '900',
+    cst: 1,
+    cbk: `https://api.yourbasket.co.ke/api/order/ipayafrica?user_id=${data.user_id}&address_id=${data.addressId}&amount=${data.totalAmount}&item_amount=${data.item_amount}&tax_amount=${data.tax_amount}&payment_menthod='Mpesa'&sale_type=${data.sale_type}`,
+  };
+  const hashData = Object.values(params)
+    .filter((value) => value !== '')
+    .join('');
+
+  const key = CryptoJS.enc.Utf8.parse(hashKey);
+  const timestamp = CryptoJS.enc.Utf8.parse(hashData);
+  params.hash = CryptoJS.enc.Hex.stringify(CryptoJS.HmacSHA256(timestamp, key));
+  try {
+    const paymentData = await axios.post(apiUrl, params);
+    console.log(paymentData);
+    return { error: false, data: paymentData.data };
+  } catch (error) {
+    return { error: true, data: 'Invalid phone number' };
   }
 };
 

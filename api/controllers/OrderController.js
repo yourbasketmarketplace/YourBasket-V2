@@ -65,6 +65,12 @@ const OrderController = () => {
         return res.status(200).json({
           data: result.data,
         });
+      } else if (req.body.payment_method === 'Ipay') {
+        const result = await PaymentService.ipay(paymentData);
+        console.log(result);
+        return res.status(400).json({
+          msg: result.data,
+        });
       } else if (req.body.payment_method === 'Cash on delivery') {
         orderContinue = true;
       }
@@ -261,6 +267,15 @@ const OrderController = () => {
     }
   };
 
+  const orderWithIpay = async (req, res) => {
+    const {
+      Paymentlog,
+    } = AllModels();
+    const logData = {};
+    logData.logbody = JSON.stringify(req.body);
+    logData.logquery = JSON.stringify(req.query);
+    await Paymentlog.create(logData);
+  };
   const getAll = async (req, res) => {
     try {
       const {
@@ -538,6 +553,7 @@ const OrderController = () => {
     get,
     pesaPalIpn,
     mpesaQuery,
+    orderWithIpay,
   };
 };
 
