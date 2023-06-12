@@ -224,6 +224,7 @@ exports.ipay = async (data = {}) => {
     console.log(paymentData);
     return { error: false, data: paymentData.data };
   } catch (error) {
+    console.log(error)
     return { error: true, data: 'Invalid phone number' };
   }
 };
