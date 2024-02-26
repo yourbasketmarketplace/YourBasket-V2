@@ -35,7 +35,6 @@ const auth = require('../policies/auth.policy');
 
 router.post('/', auth, fileUpoload().signleUpload('image'), (req, res) => BlogContoller().create(req, res));
 
-
 /**
  * @swagger
  * /api/blog:
@@ -57,7 +56,6 @@ router.post('/', auth, fileUpoload().signleUpload('image'), (req, res) => BlogCo
  */
 
 router.get('/', (req, res) => BlogContoller().getAll(req, res));
-
 
 /**
  * @swagger
@@ -86,5 +84,9 @@ router.get('/', (req, res) => BlogContoller().getAll(req, res));
  */
 
 router.get('/:id', (req, res) => BlogContoller().get(req, res));
+
+router.put('/:id', auth, fileUpoload().signleUpload('image'), (req, res) => BlogContoller().update(req, res));
+
+router.delete('/:id', auth, (req, res) => BlogContoller().destroy(req, res));
 
 module.exports = router;

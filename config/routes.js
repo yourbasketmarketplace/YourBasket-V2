@@ -33,6 +33,12 @@ exports.set_routes = (app) => {
   const payment = require('../api/routes/payment');
   // eslint-disable-next-line global-require
   const userfiled = require('../api/routes/userfield');
+  // eslint-disable-next-line global-require
+  const faqs = require('../api/routes/faq');
+  // eslint-disable-next-line global-require
+  const dashboard = require('../api/routes/dashboard');
+  // eslint-disable-next-line global-require
+  const newsletter = require('../api/routes/newsletter');
 
   app.use('/api/users', users);
   app.use('/api/categories', categories);
@@ -49,4 +55,7 @@ exports.set_routes = (app) => {
   app.use('/api/order', order);
   app.use('/api/payment', payment);
   app.use('/api/userfield', userfiled);
+  app.use('/api/faqs', faqs);
+  app.use('/api/dashboard', dashboard);
+  app.use('/api/newsletter', newsletter);
 };

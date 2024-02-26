@@ -32,7 +32,6 @@ const auth = require('../policies/auth.policy');
 
 router.post('/', auth, fileUpoload().signleUpload('image'), (req, res) => CategoryContoller().create(req, res));
 
-
 /**
  * @swagger
  * /api/categories:
@@ -54,7 +53,6 @@ router.post('/', auth, fileUpoload().signleUpload('image'), (req, res) => Catego
  */
 
 router.get('/', (req, res) => CategoryContoller().getAll(req, res));
-
 
 /**
  * @swagger
@@ -83,7 +81,6 @@ router.get('/', (req, res) => CategoryContoller().getAll(req, res));
  */
 
 router.get('/:id', (req, res) => CategoryContoller().get(req, res));
-
 
 /**
  * @swagger
@@ -121,8 +118,9 @@ router.get('/:id', (req, res) => CategoryContoller().get(req, res));
  *
  */
 
-router.put('/:id', auth, fileUpoload().signleUpload('image'), (req, res) => CategoryContoller().update(req, res));
+router.put('/order', auth, fileUpoload().signleUpload('image'), (req, res) => CategoryContoller().updateOrder(req, res));
 
+router.put('/:id', auth, fileUpoload().signleUpload('image'), (req, res) => CategoryContoller().update(req, res));
 
 /**
  * @swagger

@@ -53,7 +53,6 @@ const auth = require('../policies/auth.policy');
 
 router.post('/', auth, fileUpoload().multipleUpload('image'), (req, res) => ProductContoller().create(req, res));
 
-
 /**
  * @swagger
  * /api/products:
@@ -103,6 +102,8 @@ router.get('/', (req, res) => ProductContoller().getAll(req, res));
  */
 
 router.get('/:id', (req, res) => ProductContoller().get(req, res));
+router.get('/:id/reviews', (req, res) => ProductContoller().getReviews(req, res));
+router.get('/:id/related', (req, res) => ProductContoller().getRelated(req, res));
 
 /**
  * @swagger
@@ -154,5 +155,6 @@ router.get('/:id', (req, res) => ProductContoller().get(req, res));
 
 router.put('/:id', auth, fileUpoload().multipleUpload('image'), (req, res) => ProductContoller().update(req, res));
 
+router.delete('/:id/image/:key', auth, (req, res) => ProductContoller().destroyImage(req, res));
 
 module.exports = router;

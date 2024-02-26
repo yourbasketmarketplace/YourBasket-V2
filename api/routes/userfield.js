@@ -48,5 +48,4 @@ router.post('/', (req, res) => UserFieldController().create(req, res));
 
 router.get('/', (req, res) => UserFieldController().get(req, res));
 
-
 module.exports = router;

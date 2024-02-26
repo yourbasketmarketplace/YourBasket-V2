@@ -1,21 +1,26 @@
+const { Op } = require('sequelize');
 // eslint-disable-next-line no-unused-vars
 const AllModels = require('../services/model.service');
 const helperService = require('../services/helper.service');
+
 /** ****************************************************************************
- *                              Banner Controller
+ *  Faq Controller
  ***************************************************************************** */
-const BannerController = () => {
+const FaqController = () => {
   const create = async (req, res) => {
     // body is part of a form-data
-    const { Banner } = AllModels();
+    const { Faq } = AllModels();
     const userInfo = req.token;
     try {
-      if (req.file && req.file.filename) {
-        req.body.file_name = req.file.filename;
-        req.body.file_path = req.file.path.replace('public/', '');
+      const reuireFiled = ['question', 'answer'];
+
+      const checkField = helperService.checkRequiredParameter(reuireFiled, req.body);
+      if (checkField.isMissingParam) {
+        return res.status(400).json({ msg: checkField.message });
       }
+
       req.body.user_id = userInfo.id;
-      const data = await Banner.create(req.body);
+      const data = await Faq.create(req.body);
 
       if (!data) {
         return res.status(400).json({
@@ -35,14 +40,15 @@ const BannerController = () => {
 
   const getAll = async (req, res) => {
     try {
-      const { type } = req.query;
-      const { Banner } = AllModels();
-      const data = await Banner.findAll({
+      const { Faq } = AllModels();
+      const data = await Faq.findAll({
         where: {
-          type,
+          status: {
+            [Op.ne]: 'inactive',
+          },
         },
         order: [
-          ['banner_order', 'ASC'],
+          ['id', 'DESC'],
         ],
 
       });
@@ -59,9 +65,9 @@ const BannerController = () => {
   const get = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-    const { Banner } = AllModels();
+    const { Faq } = AllModels();
     try {
-      const data = await Banner.findOne({
+      const data = await Faq.findOne({
         where: {
           id,
         },
@@ -87,30 +93,26 @@ const BannerController = () => {
   const update = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-    const { Banner } = AllModels();
+    const { Faq } = AllModels();
     // body is part of form-data
     const {
       body,
     } = req;
 
     try {
-      if (req.file && req.file.filename) {
-        req.body.file_name = req.file.filename;
-        req.body.file_path = req.file.path.replace('public/', '');
-      }
-      const brand = await Banner.findOne({
+      const faq = await Faq.findOne({
         where: {
           id,
         },
       });
 
-      if (!brand) {
+      if (!faq) {
         return res.status(400).json({
           msg: 'Bad Request: Model not found',
         });
       }
 
-      const data = await Banner.update(
+      const data = await Faq.update(
         body,
         {
           where: {
@@ -133,13 +135,9 @@ const BannerController = () => {
   const destroy = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-    const { Banner } = AllModels();
+    const { Faq } = AllModels();
     try {
-      const data = await Banner.findOne({
-        where: {
-          id,
-        },
-      });
+      const data = Faq.findById(id);
 
       if (!data) {
         return res.status(400).json({
@@ -150,51 +148,7 @@ const BannerController = () => {
       await data.destroy();
 
       return res.status(200).json({
-        msg: 'Successfully destroyed model',
-      });
-    } catch (err) {
-      // better save it to log file
-      return res.status(500).json({
-        msg: 'Internal server error',
-      });
-    }
-  };
-
-  const updateOrder = async (req, res) => {
-    // params is part of an url
-    const { id } = req.params;
-    const { Banner } = AllModels();
-    const userInfo = req.token;
-    // body is part of form-data
-    const {
-      body,
-    } = req;
-
-    try {
-      if (userInfo && userInfo.role === 'admin') {
-        if (body.order) {
-          let updatedBanner;
-          const orders = body.order.split(',');
-          orders.map(async (id, i) => (
-            updatedBanner = await Banner.update(
-              {
-                banner_order: i,
-              },
-              {
-                where: {
-                  id,
-                },
-              },
-            )
-          ));
-
-          return res.status(200).json({
-            updatedBanner,
-          });
-        }
-      }
-      return res.status(403).json({
-        msg: 'Action not allowed',
+        msg: 'Successfully destroyed faq',
       });
     } catch (err) {
       // better save it to log file
@@ -210,8 +164,7 @@ const BannerController = () => {
     get,
     update,
     destroy,
-    updateOrder,
   };
 };
 
-module.exports = BannerController;
+module.exports = FaqController;

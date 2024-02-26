@@ -39,7 +39,7 @@ const Cart = sequelize.define('Cart', {
 
 // eslint-disable-next-line
 Cart.prototype.toJSON = function () {
-  const values = Object.assign({}, this.get());
+  const values = { ...this.get() };
   return values;
 };
 

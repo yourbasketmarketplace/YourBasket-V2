@@ -1,48 +1,41 @@
 const router = require('express').Router();
-const BrandContoller = require('../controllers/BrandController');
+const FaqContoller = require('../controllers/FaqController');
 const fileUpoload = require('../services/fileUpload.service');
 const auth = require('../policies/auth.policy');
 
 /**
  * @swagger
- * /api/brands:
+ * /api/faqs:
  *   post:
- *     tags:
- *       - Brand
- *     name: Create Brand
- *     summary: Create New Brand
+ *     name: Create Faq
+ *     summary: Create New Faq
  *     security:
  *       - bearerAuth: []
  *     consumes:
  *       - application/json
  *     parameters:
  *         - in: formData
- *           name: image
- *           type: file
- *         - in: formData
- *           name: name
+ *           name: question
  *           type: string
  *         - in: formData
- *           name: description
+ *           name: answer
  *           type: string
  *     responses:
  *       200:
- *         description: Brand Added
+ *         description: Faq Added
  *       401:
  *         description: Bad Request, not found in db
  *
  */
 
-router.post('/', auth, fileUpoload().signleUpload('image'), (req, res) => BrandContoller().create(req, res));
+router.post('/', auth, fileUpoload().signleUpload('image'), (req, res) => FaqContoller().create(req, res));
 
 /**
  * @swagger
- * /api/brands:
+ * /api/faqs:
  *   get:
- *     tags:
- *       - Brand
- *     name: List Brand
- *     summary: List All Brand
+ *     name: List Faq
+ *     summary: List All Faq
  *     security:
  *       - bearerAuth: []
  *     consumes:
@@ -55,16 +48,14 @@ router.post('/', auth, fileUpoload().signleUpload('image'), (req, res) => BrandC
  *
  */
 
-router.get('/', (req, res) => BrandContoller().getAll(req, res));
+router.get('/', (req, res) => FaqContoller().getAll(req, res));
 
 /**
  * @swagger
- * /api/brands/{id}:
+ * /api/faqs/{id}:
  *   get:
- *     tags:
- *       - Brand
- *     name: List One Brand
- *     summary: List One Brand with id
+ *     name: List One Faq
+ *     summary: List One Faq with id
  *     security:
  *       - bearerAuth: []
  *     consumes:
@@ -83,40 +74,33 @@ router.get('/', (req, res) => BrandContoller().getAll(req, res));
  *
  */
 
-router.get('/:id', (req, res) => BrandContoller().get(req, res));
+router.get('/:id', (req, res) => FaqContoller().get(req, res));
 
 /**
  * @swagger
- * /api/brands:
+ * /api/faqs:
  *   post:
- *     tags:
- *       - Brand
- *     name: Update Brand
- *     summary: Update Brand
+ *     name: Update Faq
+ *     summary: Update Faq
  *     security:
  *       - bearerAuth: []
  *     consumes:
  *       - application/json
  *     parameters:
  *         - in: formData
- *           name: image
- *           type: file
- *         - in: formData
- *           name: name
+ *           name: question
  *           type: string
  *         - in: formData
- *           name: description
+ *           name: answer
  *           type: string
  *     responses:
  *       200:
- *         description: Brand Added
+ *         description: Faq Updated
  *       401:
  *         description: Bad Request, not found in db
  *
  */
 
-router.put('/:id', auth, fileUpoload().signleUpload('image'), (req, res) => BrandContoller().update(req, res));
-
-router.delete('/:id', auth, (req, res) => BrandContoller().destroy(req, res));
+router.put('/:id', auth, fileUpoload().signleUpload('image'), (req, res) => FaqContoller().update(req, res));
 
 module.exports = router;

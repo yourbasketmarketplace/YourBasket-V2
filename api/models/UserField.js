@@ -36,7 +36,7 @@ const UserField = sequelize.define('UserField', {
 
 // eslint-disable-next-line
 UserField.prototype.toJSON = function () {
-  const values = Object.assign({}, this.get());
+  const values = { ...this.get() };
   return values;
 };
 

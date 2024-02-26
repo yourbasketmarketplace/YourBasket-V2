@@ -115,4 +115,8 @@ router.get('/', auth, (req, res) => CartContoller().getAll(req, res));
 
 router.put('/:id', auth, (req, res) => CartContoller().update(req, res));
 
+router.delete('/:id', auth, (req, res) => CartContoller().destroy(req, res));
+
+router.delete('/:id/wishlist', auth, (req, res) => CartContoller().destroyWishlist(req, res));
+
 module.exports = router;

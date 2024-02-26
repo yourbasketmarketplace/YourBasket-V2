@@ -2,36 +2,34 @@ const Sequelize = require('sequelize');
 
 const sequelize = require('../../config/database');
 
-const tableName = 'blogs';
+const tableName = 'user_otp';
 
-const Blog = sequelize.define('Blog', {
-  name: {
+const UserOtp = sequelize.define('UserOtp', {
+  otp: {
     type: Sequelize.STRING,
     unique: false,
   },
-  file_name: {
+  phone: {
     type: Sequelize.STRING,
-  },
-  file_path: {
-    type: Sequelize.STRING,
-  },
-  description: {
-    type: Sequelize.TEXT,
     unique: false,
   },
-  status: {
+  user_id: {
+    type: Sequelize.INTEGER,
+    unique: false,
+  },
+  type: {
     type: Sequelize.ENUM,
-    values: ['active', 'inactive'],
-    defaultValue: 'active',
+    values: ['register', 'forgot'],
+    defaultValue: 'register',
   },
 }, {
   tableName,
 });
 
 // eslint-disable-next-line
-Blog.prototype.toJSON = function () {
+UserOtp.prototype.toJSON = function () {
   const values = { ...this.get() };
   return values;
 };
 
-module.exports = Blog;
+module.exports = UserOtp;

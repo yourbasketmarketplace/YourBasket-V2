@@ -61,6 +61,14 @@ const User = sequelize.define(
     otp: {
       type: Sequelize.STRING,
     },
+    social_type: {
+      type: Sequelize.ENUM,
+      values: ['facebook', 'google'],
+    },
+    social_id: {
+      type: Sequelize.STRING,
+      unique: false,
+    },
     role: {
       type: Sequelize.ENUM,
       values: ['admin', 'vendor', 'user'],
@@ -99,12 +107,11 @@ const User = sequelize.define(
 
 // eslint-disable-next-line
 User.prototype.toJSON = function () {
-  const values = Object.assign({}, this.get());
+  const values = { ...this.get() };
 
   delete values.password;
 
   return values;
 };
-
 
 module.exports = User;

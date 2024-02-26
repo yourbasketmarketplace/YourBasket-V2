@@ -2,7 +2,7 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const mapRoutes = require('express-routes-mapper');
 
-const config = require('../../config/');
+const config = require('../../config');
 const database = require('../../config/database');
 const auth = require('../../api/policies/auth.policy');
 
@@ -18,7 +18,6 @@ const beforeAction = async () => {
   testapp.use('/public', mappedOpenRoutes);
   testapp.use('/private', mappedAuthRoutes);
 
-
   await database.authenticate();
   await database.drop();
   await database.sync().then(() => console.log('Connection to the database has been established successfully'));
@@ -29,6 +28,5 @@ const beforeAction = async () => {
 const afterAction = async () => {
   await database.close();
 };
-
 
 module.exports = { beforeAction, afterAction };

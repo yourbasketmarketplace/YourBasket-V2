@@ -29,4 +29,14 @@ router.post('/sendotp', auth, (req, res) => FrontpageController().sendOtp(req, r
 
 router.post('/verifyotp', auth, (req, res) => FrontpageController().verifyOtp(req, res));
 
+// route for social media icons..
+router.get('/social', (req, res) => FrontpageController().getSetting(req, res, 'social_links'));
+
+router.post('/social', auth, (req, res) => FrontpageController().updateSetting(req, res, 'social_links'));
+
+// route for social contact page..
+router.get('/contact-page', (req, res) => FrontpageController().getSetting(req, res, 'contact_page'));
+
+router.post('/contact-page', auth, (req, res) => FrontpageController().updateSetting(req, res, 'contact_page'));
+
 module.exports = router;

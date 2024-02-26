@@ -1,7 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 const AllModels = require('../services/model.service');
 
-
 /** ****************************************************************************
  *                              Userfiled Controller
  ***************************************************************************** */
@@ -42,7 +41,7 @@ const UserFieldController = () => {
         data,
       });
     } catch (err) {
-      console.log(err)
+      console.log(err);
       return res.status(500).json({
         msg: 'Internal server error',
       });

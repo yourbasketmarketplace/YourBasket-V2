@@ -175,7 +175,6 @@ const CartController = () => {
     }
   };
 
-
   const update = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
@@ -220,13 +219,50 @@ const CartController = () => {
     }
   };
 
-
   const destroy = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
     const { Cart } = AllModels();
     try {
-      const data = Cart.findById(id);
+      const data = await Cart.findOne({
+        where: {
+          id,
+        },
+      });
+
+      if (!data) {
+        return res.status(400).json({
+          msg: 'Bad Request: Model not found',
+        });
+      }
+
+      await data.destroy();
+
+      return res.status(200).json({
+        msg: 'Successfully destroyed model',
+      });
+    } catch (err) {
+      // better save it to log file
+      return res.status(500).json({
+        msg: 'Internal server error',
+      });
+    }
+  };
+
+  const destroyWishlist = async (req, res) => {
+    // params is part of an url
+    const { id } = req.params;
+    const { Cart } = AllModels();
+    const userInfo = req.token;
+
+    try {
+      const data = await Cart.findOne({
+        where: {
+          product_id: id,
+          user_id: userInfo.id,
+          type: 'whislist',
+        },
+      });
 
       if (!data) {
         return res.status(400).json({
@@ -254,6 +290,7 @@ const CartController = () => {
     update,
     destroy,
     tempCreate,
+    destroyWishlist,
   };
 };
 

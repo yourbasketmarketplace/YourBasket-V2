@@ -2,14 +2,14 @@ const Sequelize = require('sequelize');
 
 const sequelize = require('../../config/database');
 
-const tableName = 'payment_log';
+const tableName = 'settings';
 
-const PaymentLog = sequelize.define('PaymentLog', {
-  logbody: {
-    type: Sequelize.TEXT,
+const Setting = sequelize.define('Setting', {
+  meta_key: {
+    type: Sequelize.STRING,
     unique: false,
   },
-  logquery: {
+  meta_value: {
     type: Sequelize.TEXT,
     unique: false,
   },
@@ -18,9 +18,9 @@ const PaymentLog = sequelize.define('PaymentLog', {
 });
 
 // eslint-disable-next-line
-PaymentLog.prototype.toJSON = function () {
+Setting.prototype.toJSON = function () {
   const values = { ...this.get() };
   return values;
 };
 
-module.exports = PaymentLog;
+module.exports = Setting;

@@ -39,7 +39,7 @@ const Temcart = sequelize.define('Temcart', {
 
 // eslint-disable-next-line
 Temcart.prototype.toJSON = function () {
-  const values = Object.assign({}, this.get());
+  const values = { ...this.get() };
   return values;
 };
 

@@ -82,7 +82,6 @@ const BlogController = () => {
     }
   };
 
-
   const update = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
@@ -109,15 +108,17 @@ const BlogController = () => {
         });
       }
 
-      const updatedCategory = await Blog.update({
+      const updatedBlog = await Blog.update(
         body,
-        where: {
-          id,
+        {
+          where: {
+            id,
+          },
         },
-      });
+      );
 
       return res.status(200).json({
-        updatedCategory,
+        updatedBlog,
       });
     } catch (err) {
       // better save it to log file
@@ -127,13 +128,16 @@ const BlogController = () => {
     }
   };
 
-
   const destroy = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
     const { Blog } = AllModels();
     try {
-      const data = Blog.findById(id);
+      const data = await Blog.findOne({
+        where: {
+          id,
+        },
+      });
 
       if (!data) {
         return res.status(400).json({
@@ -141,7 +145,7 @@ const BlogController = () => {
         });
       }
 
-      await Blog.destroy();
+      await data.destroy();
 
       return res.status(200).json({
         msg: 'Successfully destroyed model',

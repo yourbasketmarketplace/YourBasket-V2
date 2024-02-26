@@ -1,21 +1,42 @@
 // eslint-disable-next-line no-unused-vars
+const Sequelize = require('sequelize');
 const AllModels = require('../services/model.service');
 const helperService = require('../services/helper.service');
+
 /** ****************************************************************************
- *                              Banner Controller
+ *                              Dashboard Controller
  ***************************************************************************** */
-const BannerController = () => {
+const NewsletterController = () => {
   const create = async (req, res) => {
     // body is part of a form-data
-    const { Banner } = AllModels();
-    const userInfo = req.token;
+    const { Newsletter } = AllModels();
+
     try {
-      if (req.file && req.file.filename) {
-        req.body.file_name = req.file.filename;
-        req.body.file_path = req.file.path.replace('public/', '');
+      const reuireFiled = ['email'];
+      const checkField = helperService.checkRequiredParameter(reuireFiled, req.body);
+      if (checkField.isMissingParam) {
+        return res.status(400).json({ msg: 'Please enter your email' });
       }
-      req.body.user_id = userInfo.id;
-      const data = await Banner.create(req.body);
+
+      const reuireFiled1 = ['gender'];
+      const checkField1 = helperService.checkRequiredParameter(reuireFiled1, req.body);
+      if (checkField1.isMissingParam) {
+        return res.status(400).json({ msg: 'Please select gender' });
+      }
+
+      // Check if user with same email exists..
+      if (req.body.email) {
+        const eUser = await Newsletter.findOne({
+          where: {
+            email: req.body.email,
+          },
+        });
+        if (eUser) {
+          return res.status(400).json({ msg: 'Your have already subscribed!' });
+        }
+      }
+
+      const data = await Newsletter.create(req.body);
 
       if (!data) {
         return res.status(400).json({
@@ -35,14 +56,10 @@ const BannerController = () => {
 
   const getAll = async (req, res) => {
     try {
-      const { type } = req.query;
-      const { Banner } = AllModels();
-      const data = await Banner.findAll({
-        where: {
-          type,
-        },
+      const { Newsletter } = AllModels();
+      const data = await Newsletter.findAll({
         order: [
-          ['banner_order', 'ASC'],
+          ['id', 'DESC'],
         ],
 
       });
@@ -59,9 +76,9 @@ const BannerController = () => {
   const get = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-    const { Banner } = AllModels();
+    const { Newsletter } = AllModels();
     try {
-      const data = await Banner.findOne({
+      const data = await Newsletter.findOne({
         where: {
           id,
         },
@@ -87,30 +104,26 @@ const BannerController = () => {
   const update = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-    const { Banner } = AllModels();
+    const { Newsletter } = AllModels();
     // body is part of form-data
     const {
       body,
     } = req;
 
     try {
-      if (req.file && req.file.filename) {
-        req.body.file_name = req.file.filename;
-        req.body.file_path = req.file.path.replace('public/', '');
-      }
-      const brand = await Banner.findOne({
+      const letter = await Newsletter.findOne({
         where: {
           id,
         },
       });
 
-      if (!brand) {
+      if (!letter) {
         return res.status(400).json({
           msg: 'Bad Request: Model not found',
         });
       }
 
-      const data = await Banner.update(
+      const data = await Newsletter.update(
         body,
         {
           where: {
@@ -133,9 +146,9 @@ const BannerController = () => {
   const destroy = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
-    const { Banner } = AllModels();
+    const { Newsletter } = AllModels();
     try {
-      const data = await Banner.findOne({
+      const data = await Newsletter.findOne({
         where: {
           id,
         },
@@ -150,51 +163,7 @@ const BannerController = () => {
       await data.destroy();
 
       return res.status(200).json({
-        msg: 'Successfully destroyed model',
-      });
-    } catch (err) {
-      // better save it to log file
-      return res.status(500).json({
-        msg: 'Internal server error',
-      });
-    }
-  };
-
-  const updateOrder = async (req, res) => {
-    // params is part of an url
-    const { id } = req.params;
-    const { Banner } = AllModels();
-    const userInfo = req.token;
-    // body is part of form-data
-    const {
-      body,
-    } = req;
-
-    try {
-      if (userInfo && userInfo.role === 'admin') {
-        if (body.order) {
-          let updatedBanner;
-          const orders = body.order.split(',');
-          orders.map(async (id, i) => (
-            updatedBanner = await Banner.update(
-              {
-                banner_order: i,
-              },
-              {
-                where: {
-                  id,
-                },
-              },
-            )
-          ));
-
-          return res.status(200).json({
-            updatedBanner,
-          });
-        }
-      }
-      return res.status(403).json({
-        msg: 'Action not allowed',
+        msg: 'Successfully destroyed news letter',
       });
     } catch (err) {
       // better save it to log file
@@ -210,8 +179,7 @@ const BannerController = () => {
     get,
     update,
     destroy,
-    updateOrder,
   };
 };
 
-module.exports = BannerController;
+module.exports = NewsletterController;

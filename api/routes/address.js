@@ -113,4 +113,6 @@ router.get('/', auth, (req, res) => AddressContoller().getAll(req, res));
 
 router.put('/:id', auth, (req, res) => AddressContoller().update(req, res));
 
+router.delete('/:id', auth, (req, res) => AddressContoller().destroy(req, res));
+
 module.exports = router;

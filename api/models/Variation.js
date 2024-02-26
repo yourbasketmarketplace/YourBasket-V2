@@ -2,30 +2,28 @@ const Sequelize = require('sequelize');
 
 const sequelize = require('../../config/database');
 
-const tableName = 'categories';
+const tableName = 'variations';
 
-const Category = sequelize.define('Category', {
+const Variation = sequelize.define('Variation', {
   name: {
     type: Sequelize.STRING,
     unique: false,
   },
-  file_name: {
-    type: Sequelize.STRING,
-  },
-  file_path: {
-    type: Sequelize.STRING,
-  },
-  cat_order: {
+  product_id: {
     type: Sequelize.INTEGER,
     unique: false,
   },
-  slug: {
-    type: Sequelize.STRING,
+  quantity: {
+    type: Sequelize.INTEGER,
+    unique: false,
   },
-  type: {
-    type: Sequelize.DECIMAL,
-    allowNull: false,
-    defaultValue: '0',
+  mrp: {
+    type: Sequelize.INTEGER,
+    unique: false,
+  },
+  offer_price: {
+    type: Sequelize.INTEGER,
+    unique: false,
   },
   status: {
     type: Sequelize.ENUM,
@@ -37,9 +35,9 @@ const Category = sequelize.define('Category', {
 });
 
 // eslint-disable-next-line
-Category.prototype.toJSON = function () {
+Variation.prototype.toJSON = function () {
   const values = { ...this.get() };
   return values;
 };
 
-module.exports = Category;
+module.exports = Variation;

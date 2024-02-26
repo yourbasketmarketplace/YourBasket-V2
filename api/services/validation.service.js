@@ -10,4 +10,3 @@ module.exports = {
   },
   isImage: (fileName) => fileName.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/),
 };
-

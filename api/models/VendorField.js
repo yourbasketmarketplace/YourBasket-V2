@@ -66,7 +66,7 @@ const VendorField = sequelize.define('VendorField', {
 
 // eslint-disable-next-line
 VendorField.prototype.toJSON = function () {
-  const values = Object.assign({}, this.get());
+  const values = { ...this.get() };
   return values;
 };
 

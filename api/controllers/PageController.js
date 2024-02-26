@@ -68,7 +68,6 @@ const PageController = () => {
     }
   };
 
-
   const get = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
@@ -96,7 +95,6 @@ const PageController = () => {
       });
     }
   };
-
 
   const update = async (req, res) => {
     // params is part of an url
@@ -136,7 +134,6 @@ const PageController = () => {
       });
     }
   };
-
 
   const destroy = async (req, res) => {
     // params is part of an url

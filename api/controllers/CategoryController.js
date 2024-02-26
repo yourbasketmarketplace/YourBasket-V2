@@ -12,14 +12,30 @@ const CategoryController = () => {
       const categoryExist = await Category.findOne({
         where: {
           name: req.body.name,
-          status: {
-            [Op.ne]: 'inactive',
-          },
+          type: (req.body.type ? req.body.type : 0),
         },
       });
       if (categoryExist) {
         return res.status(500).json({ msg: 'Category name already exists' });
       }
+
+      // make product slug..
+      let slug = req.body.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+      const existingCategory = await Category.findOne({
+        where: {
+          slug,
+        },
+      });
+      if (existingCategory) {
+        const lastCategory = await Category.findOne({
+          order: [
+            ['id', 'DESC'],
+          ],
+        });
+        slug = `${slug}-${lastCategory.id + 1}`;
+      }
+      req.body.slug = slug;
+
       const category = await Category.create(req.body);
 
       if (!category) {
@@ -43,9 +59,6 @@ const CategoryController = () => {
       const userInfo = req.token;
 
       let query = {
-        order: [
-          ['id', 'DESC'],
-        ],
         include: [
           {
             model: Category,
@@ -57,7 +70,32 @@ const CategoryController = () => {
           },
         ],
       };
-      if (type) {
+      if (front && front === 'yes') {
+        if (type) {
+          query = {
+            where: {
+              type,
+            },
+            include: [
+              {
+                model: Category,
+                where: {
+                  status: 'active',
+                },
+                include: [
+                  {
+                    model: Category,
+                    where: {
+                      status: 'active',
+                    },
+                  },
+                ],
+              },
+            ],
+
+          };
+        }
+      } else if (type) {
         query = {
           where: {
             type,
@@ -80,11 +118,10 @@ const CategoryController = () => {
         query.where.status = {
           [Op.ne]: 'inactive',
         };
-      } else {
-        query.order = [
-          ['id', 'DESC'],
-        ];
       }
+      query.order = [
+        ['cat_order', 'ASC'],
+      ];
       const categories = await Category.findAll(query);
       return res.status(200).json({
         categories,
@@ -160,7 +197,6 @@ const CategoryController = () => {
     }
   };
 
-
   const update = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
@@ -188,6 +224,20 @@ const CategoryController = () => {
           });
         }
 
+        const categoryExist = await Category.findOne({
+          where: {
+            id: {
+              [Op.ne]: id,
+            },
+            name: req.body.name,
+            type: (category.type ? category.type : 0),
+          },
+        });
+
+        if (categoryExist) {
+          return res.status(500).json({ msg: 'Category name already exists' });
+        }
+
         const updatedCategory = await Category.update(
           body,
           {
@@ -211,7 +261,6 @@ const CategoryController = () => {
       });
     }
   };
-
 
   const destroy = async (req, res) => {
     // params is part of an url
@@ -239,12 +288,56 @@ const CategoryController = () => {
     }
   };
 
+  const updateOrder = async (req, res) => {
+    // params is part of an url
+    const { id } = req.params;
+    const userInfo = req.token;
+    // body is part of form-data
+    const {
+      body,
+    } = req;
+
+    try {
+      if (userInfo && userInfo.role === 'admin') {
+        if (body.order) {
+          let updatedCategory;
+          const orders = body.order.split(',');
+          orders.map(async (id, i) => (
+            updatedCategory = await Category.update(
+              {
+                cat_order: i,
+              },
+              {
+                where: {
+                  id,
+                },
+              },
+            )
+          ));
+
+          return res.status(200).json({
+            updatedCategory,
+          });
+        }
+      }
+      return res.status(403).json({
+        msg: 'Action not allowed',
+      });
+    } catch (err) {
+      // better save it to log file
+      return res.status(500).json({
+        msg: 'Internal server error',
+      });
+    }
+  };
+
   return {
     create,
     getAll,
     get,
     update,
     destroy,
+    updateOrder,
   };
 };
 

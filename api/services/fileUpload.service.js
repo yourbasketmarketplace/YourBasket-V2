@@ -9,7 +9,8 @@ const fileUpload = () => {
   const callBackHandler = (req, res, err, next) => {
     if (err instanceof multer.MulterError) {
       return res.status(400).send({ status: false, message: err.message });
-    } else if (err) {
+    }
+    if (err) {
       return res.status(422).send({ status: false, message: err.message });
     }
     return next();

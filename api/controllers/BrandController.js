@@ -23,6 +23,28 @@ const BrandController = () => {
         req.body.file_path = req.file.path.replace('public/', '');
       }
       req.body.user_id = userInfo.id;
+
+      if (userInfo.role == 'admin') {
+        req.body.status = 'Published';
+      }
+
+      // make brand slug..
+      let slug = req.body.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+      const existingBrand = await Brand.findOne({
+        where: {
+          slug,
+        },
+      });
+      if (existingBrand) {
+        const lastBrand = await Brand.findOne({
+          order: [
+            ['id', 'DESC'],
+          ],
+        });
+        slug = `${slug}-${lastBrand.id + 1}`;
+      }
+      req.body.slug = slug;
+
       const data = await Brand.create(req.body);
 
       if (!data) {
@@ -44,12 +66,22 @@ const BrandController = () => {
   const getAll = async (req, res) => {
     try {
       const { Brand } = AllModels();
-      const data = await Brand.findAll({
-        where: {
-          status: {
-            [Op.ne]: 'inactive',
-          },
+      const { front } = req.query;
+
+      let pwhere = {
+        status: {
+          [Op.ne]: 'inactive',
         },
+      };
+      if (front && front === 'yes') {
+        pwhere = {
+          status: {
+            [Op.in]: ['Published'],
+          },
+        };
+      }
+      const data = await Brand.findAll({
+        where: pwhere,
         order: [
           ['id', 'DESC'],
         ],
@@ -115,7 +147,6 @@ const BrandController = () => {
     }
   };
 
-
   const update = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
@@ -162,13 +193,16 @@ const BrandController = () => {
     }
   };
 
-
   const destroy = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
     const { Brand } = AllModels();
     try {
-      const data = Brand.findById(id);
+      const data = await Brand.findOne({
+        where: {
+          id,
+        },
+      });
 
       if (!data) {
         return res.status(400).json({

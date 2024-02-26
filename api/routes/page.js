@@ -38,7 +38,6 @@ const auth = require('../policies/auth.policy');
 
 router.post('/', auth, fileUpoload().signleUpload('image'), (req, res) => PageContoller().create(req, res));
 
-
 /**
  * @swagger
  * /api/pages:
@@ -60,7 +59,6 @@ router.post('/', auth, fileUpoload().signleUpload('image'), (req, res) => PageCo
  */
 
 router.get('/', (req, res) => PageContoller().getAll(req, res));
-
 
 /**
  * @swagger
@@ -124,6 +122,5 @@ router.get('/:id', (req, res) => PageContoller().get(req, res));
  */
 
 router.put('/:id', auth, fileUpoload().signleUpload('image'), (req, res) => PageContoller().update(req, res));
-
 
 module.exports = router;

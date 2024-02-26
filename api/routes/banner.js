@@ -41,7 +41,6 @@ const auth = require('../policies/auth.policy');
 
 router.post('/', auth, fileUpoload().signleUpload('image'), (req, res) => BannerContoller().create(req, res));
 
-
 /**
  * @swagger
  * /api/banners:
@@ -63,7 +62,6 @@ router.post('/', auth, fileUpoload().signleUpload('image'), (req, res) => Banner
  */
 
 router.get('/', (req, res) => BannerContoller().getAll(req, res));
-
 
 /**
  * @swagger
@@ -92,5 +90,41 @@ router.get('/', (req, res) => BannerContoller().getAll(req, res));
  */
 
 router.get('/:id', (req, res) => BannerContoller().get(req, res));
+
+/**
+ * @swagger
+ * /api/brands:
+ *   post:
+ *     tags:
+ *       - Brand
+ *     name: Update Brand
+ *     summary: Update Brand
+ *     security:
+ *       - bearerAuth: []
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *         - in: formData
+ *           name: image
+ *           type: file
+ *         - in: formData
+ *           name: name
+ *           type: string
+ *         - in: formData
+ *           name: description
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Brand Added
+ *       401:
+ *         description: Bad Request, not found in db
+ *
+ */
+
+router.put('/order', auth, fileUpoload().signleUpload('image'), (req, res) => BannerContoller().updateOrder(req, res));
+
+router.put('/:id', auth, fileUpoload().signleUpload('image'), (req, res) => BannerContoller().update(req, res));
+
+router.delete('/:id', auth, (req, res) => BannerContoller().destroy(req, res));
 
 module.exports = router;

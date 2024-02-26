@@ -29,6 +29,10 @@ const Product = sequelize.define('Product', {
     type: Sequelize.STRING,
     unique: true,
   },
+  slug: {
+    type: Sequelize.STRING,
+    unique: true,
+  },
   tag: {
     type: Sequelize.STRING,
     unique: false,
@@ -66,10 +70,21 @@ const Product = sequelize.define('Product', {
     type: Sequelize.TEXT,
     unique: false,
   },
-  best_deal: {
-    type: Sequelize.ENUM,
-    values: ['Yes', 'No'],
-    defaultValue: 'No',
+  new_arrival: {
+    type: Sequelize.TINYINT,
+    unique: false,
+  },
+  top_deal: {
+    type: Sequelize.TINYINT,
+    unique: false,
+  },
+  best_seller: {
+    type: Sequelize.TINYINT,
+    unique: false,
+  },
+  view_count: {
+    type: Sequelize.INTEGER,
+    unique: false,
   },
   status: {
     type: Sequelize.ENUM,
@@ -82,7 +97,7 @@ const Product = sequelize.define('Product', {
 
 // eslint-disable-next-line
 Product.prototype.toJSON = function () {
-  const values = Object.assign({}, this.get());
+  const values = { ...this.get() };
   return values;
 };
 

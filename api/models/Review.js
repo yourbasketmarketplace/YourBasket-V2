@@ -21,8 +21,8 @@ const Review = sequelize.define('Review', {
   },
   status: {
     type: Sequelize.ENUM,
-    values: ['active', 'inactive'],
-    defaultValue: 'active',
+    values: ['pending', 'approved', 'rejected'],
+    defaultValue: 'pending',
   },
 }, {
   tableName,
@@ -30,7 +30,7 @@ const Review = sequelize.define('Review', {
 
 // eslint-disable-next-line
 Review.prototype.toJSON = function () {
-  const values = Object.assign({}, this.get());
+  const values = { ...this.get() };
   return values;
 };
 

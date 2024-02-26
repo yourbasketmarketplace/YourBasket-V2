@@ -1,24 +1,25 @@
 const axios = require('axios');
 const moment = require('moment');
-const CryptoJS = require('crypto-js');
+const crypto = require('crypto');
+const helperService = require('./helper.service');
 
 exports.pesapal = async (data = {}) => {
   const configKey = {
-    consumer_key: 'qkio1BGGYAXTu2JOfm7XSXNruoZsrqEW',
-    consumer_secret: 'osGQ364R49cXKeOYSpaOnT++rHs=',
+    consumer_key: 'Ggk24BMccKXmriYLvU0TJlwfb5kH9EKl',
+    consumer_secret: 'GUsJtSDcmv2/z6Wwg1UC3rakXuU=',
   };
   try {
-    const tokenData = await axios.post('https://cybqa.pesapal.com/pesapalv3/api/Auth/RequestToken', configKey);
+    const tokenData = await axios.post('https://pay.pesapal.com/v3/api/Auth/RequestToken', configKey);
 
     let postdata = {
-      url: `https://api.yourbasket.co.ke/api/payment/ipn?user_id=${data.user_id}&address_id=${data.addressId}&amount=${data.totalAmount}&item_amount=${data.item_amount}&tax_amount=${data.tax_amount}&payment_menthod='Pesapal'&sale_type=${data.sale_type}`,
+      url: `https://api.yourbasket.co.ke/api/payment/ipn?user_id=${data.user_id}&address_id=${data.addressId}&billing_address_id=${data.billingAddressId}&amount=${data.totalAmount}&shipping_amount=${data.shipping_amount}&item_amount=${data.item_amount}&tax_amount=${data.tax_amount}&payment_menthod='Pesapal'&sale_type=${data.sale_type}`,
       ipn_notification_type: 'GET',
     };
 
     let config = {
       method: 'post',
       maxBodyLength: Infinity,
-      url: 'https://cybqa.pesapal.com/pesapalv3/api/URLSetup/RegisterIPN',
+      url: 'https://pay.pesapal.com/v3/api/URLSetup/RegisterIPN',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -30,7 +31,7 @@ exports.pesapal = async (data = {}) => {
     const ipnData = await axios.request(config);
     if (ipnData.data) {
       config.method = 'get';
-      config.url = 'https://cybqa.pesapal.com/pesapalv3/apiURLSetup/GetIpnList';
+      config.url = 'https://pay.pesapal.com/v3/apiURLSetup/GetIpnList';
       await axios.request(config);
       postdata = {
         id: new Date().getTime(),
@@ -58,7 +59,7 @@ exports.pesapal = async (data = {}) => {
       config = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: 'https://cybqa.pesapal.com/pesapalv3/api/Transactions/SubmitOrderRequest',
+        url: 'https://pay.pesapal.com/v3/api/Transactions/SubmitOrderRequest',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
@@ -88,15 +89,15 @@ exports.pesapal = async (data = {}) => {
 };
 exports.pesapalTransactionSatus = async (orderTrackingId = {}) => {
   const configKey = {
-    consumer_key: 'qkio1BGGYAXTu2JOfm7XSXNruoZsrqEW',
-    consumer_secret: 'osGQ364R49cXKeOYSpaOnT++rHs=',
+    consumer_key: 'Ggk24BMccKXmriYLvU0TJlwfb5kH9EKl',
+    consumer_secret: 'GUsJtSDcmv2/z6Wwg1UC3rakXuU=',
   };
   try {
-    const tokenData = await axios.post('https://cybqa.pesapal.com/pesapalv3/api/Auth/RequestToken', configKey);
+    const tokenData = await axios.post('https://pay.pesapal.com/v3/api/Auth/RequestToken', configKey);
     const config = {
       method: 'get',
       maxBodyLength: Infinity,
-      url: `https://cybqa.pesapal.com/pesapalv3/api/Transactions/GetTransactionStatus?orderTrackingId=${orderTrackingId}`,
+      url: `https://pay.pesapal.com/v3/api/Transactions/GetTransactionStatus?orderTrackingId=${orderTrackingId}`,
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -116,12 +117,12 @@ exports.pesapalTransactionSatus = async (orderTrackingId = {}) => {
 
 exports.mpesa = async (data = {}) => {
   try {
-    const consumerKey = 'ToDO6k8kjGoNcs7sI5cCQhLmO11Wtxyl';
-    const consumerSecret = 'nAVDGbv563EpfXFZ';
+    const consumerKey = 'kWBkdtmP8YW82s21d7NH5l52AvlVPI3z';
+    const consumerSecret = 'MpiO0BDXg3AmDBET';
     const auth = new Buffer.from(`${consumerKey}:${consumerSecret}`).toString('base64');
     const config = {
       method: 'get',
-      url: 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials',
+      url: 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials',
       headers: {
         Authorization: `Basic ${auth}`,
       },
@@ -129,20 +130,20 @@ exports.mpesa = async (data = {}) => {
     // 254708374149
     const tokenData = await axios.request(config);
     const timestamp = moment().format('YYYYMMDDHHmmss');
-    const passkey = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919';
-    const shortCode = '174379';
-    const paymentUrl = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
+    const passkey = 'da3ff44e6a57981c581159faf9d9cf0ded04fd5b35c8f39e2bf5d0ccdaa6f04d';
+    const shortCode = '4110837';
+    const paymentUrl = 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
     const password = new Buffer.from(`${shortCode}${passkey}${timestamp}`).toString('base64');
     const postData = {
       BusinessShortCode: shortCode,
       Password: password,
       Timestamp: timestamp,
       TransactionType: 'CustomerPayBillOnline',
-      Amount: (data.totalAmount) ? data.totalAmount : 1,
-      PartyA: `254${data.user.phone}`,
-      PartyB: 174379,
-      PhoneNumber: `254${data.user.phone}`,
-      CallBackURL: `https://api.yourbasket.co.ke/api/order/mpesa?user_id=${data.user_id}&address_id=${data.addressId}&amount=${data.totalAmount}&item_amount=${data.item_amount}&tax_amount=${data.tax_amount}&payment_menthod='Mpesa'&sale_type=${data.sale_type}`,
+      Amount: (data.totalAmount) ? Math.round(data.totalAmount) : 1,
+      PartyA: `${data.user.phone}`,
+      PartyB: 4110837,
+      PhoneNumber: `${data.user.phone}`,
+      CallBackURL: `https://api.yourbasket.co.ke/api/order/mpesa?user_id=${data.user_id}&address_id=${data.addressId}&billing_address_id=${data.billingAddressId}&amount=${data.totalAmount}&shipping_amount=${data.shipping_amount}&item_amount=${data.item_amount}&tax_amount=${data.tax_amount}&payment_menthod='Mpesa'&sale_type=${data.sale_type}`,
       AccountReference: 'CompanyXLTD',
       TransactionDesc: 'Payment of X',
     };
@@ -159,12 +160,12 @@ exports.mpesa = async (data = {}) => {
 
 exports.mpesaQuery = async (CheckoutRequestID = {}) => {
   try {
-    const consumerKey = 'ToDO6k8kjGoNcs7sI5cCQhLmO11Wtxyl';
-    const consumerSecret = 'nAVDGbv563EpfXFZ';
+    const consumerKey = 'kWBkdtmP8YW82s21d7NH5l52AvlVPI3z';
+    const consumerSecret = 'MpiO0BDXg3AmDBET';
     const auth = new Buffer.from(`${consumerKey}:${consumerSecret}`).toString('base64');
     const config = {
       method: 'get',
-      url: 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials',
+      url: 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials',
       headers: {
         Authorization: `Basic ${auth}`,
       },
@@ -172,9 +173,9 @@ exports.mpesaQuery = async (CheckoutRequestID = {}) => {
     // 254708374149
     const tokenData = await axios.request(config);
     const timestamp = moment().format('YYYYMMDDHHmmss');
-    const passkey = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919';
-    const shortCode = '174379';
-    const queryUrl = 'https://sandbox.safaricom.co.ke/mpesa/stkpushquery/v1/query';
+    const passkey = 'da3ff44e6a57981c581159faf9d9cf0ded04fd5b35c8f39e2bf5d0ccdaa6f04d';
+    const shortCode = '4110837';
+    const queryUrl = 'https://api.safaricom.co.ke/mpesa/stkpushquery/v1/query';
     const password = new Buffer.from(`${shortCode}${passkey}${timestamp}`).toString('base64');
     const postData = {
       BusinessShortCode: shortCode,
@@ -192,40 +193,37 @@ exports.mpesaQuery = async (CheckoutRequestID = {}) => {
     return { error: true, data: error };
   }
 };
-exports.ipay = async (data = {}) => {
-  const invNumber = moment().format('YYYYMMDDHHmmss');
-  const apiUrl = 'https://apis.ipayafrica.com/payments/v2/transact';
-  const hashKey = 'demoCHANGED';
-  const params = {
-    live: 0,
-    oid: `ORD122${invNumber}`,
-    inv: invNumber,
-    amount: (data.totalAmount) ? data.totalAmount : 1,
-    tel: `254${data.user.phone}`,
-    eml: data.user.email,
-    vid: 'demo',
-    curr: 'KES',
-    p1: '',
-    p2: '',
-    p3: '',
-    p4: '',
-    cst: 1,
-    cbk: `https://api.yourbasket.co.ke/api/order/ipayafrica?user_id=${data.user_id}&address_id=${data.addressId}&amount=${data.totalAmount}&item_amount=${data.item_amount}&tax_amount=${data.tax_amount}&payment_menthod='Mpesa'&sale_type=${data.sale_type}`,
-  };
-  const hashData = Object.values(params)
-    .filter((value) => value !== '')
-    .join('');
 
-  const key = CryptoJS.enc.Utf8.parse(hashKey);
-  const timestamp = CryptoJS.enc.Utf8.parse(hashData);
-  params.hash = CryptoJS.enc.Hex.stringify(CryptoJS.HmacSHA256(timestamp, key));
+exports.iPayQuery = async (data) => {
   try {
-    const paymentData = await axios.post(apiUrl, params);
-    console.log(paymentData);
-    return { error: false, data: paymentData.data };
+    const vid = 'ecml';
+    const consumerSecret = '6H8e6zmw4RUHfchy#qPknbqnVEs5rB@f';
+    const random = await helperService.randString(5);
+    const p = {
+      live: '1',
+      oid: random,
+      inv: random,
+      ttl: (data.totalAmount) ? data.totalAmount : 1,
+      tel: `${data.user.phone}`,
+      eml: `${data.user.email}`,
+      vid,
+      curr: 'KES',
+      p1: random,
+      cbk: 'https://yourbasket.co.ke/#/checkout/ipay',
+      cst: '1',
+      crl: '2',
+    };
+
+    // make hash..
+    const dataString = `${p.live}${p.oid}${p.inv}${p.ttl}${p.tel}${p.eml}${p.vid}${p.curr}${p.p1}${p.cbk}${p.cst}${p.crl}`;
+
+    const hmac = crypto.createHmac('sha1', consumerSecret);
+    hmac.update(dataString);
+
+    p.hsh = hmac.digest('hex');
+
+    return { error: false, data: { formdata: p, hash: p.hsh } };
   } catch (error) {
-    console.log(error)
-    return { error: true, data: 'Invalid phone number' };
+    return { error: true, data: error };
   }
 };
-

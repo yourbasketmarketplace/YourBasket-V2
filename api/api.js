@@ -15,7 +15,6 @@ const app = express();
 const server = http.Server(app);
 const io = require('socket.io')(server, { cors: { origin: '*' } });
 
-
 app.set('socketio', io);
 /**
  * Swagger UI Configuration
@@ -55,15 +54,13 @@ const swaggerSpec = swaggerJSDoc(options);
 /**
  * server configuration
  */
-const config = require('../config/');
+const config = require('../config');
 const dbService = require('./services/db.service');
 
 // environment: development, staging, testing, production
 const environment = process.env.NODE_ENV;
 
-
 const DB = dbService(environment, config.migrate).start();
-
 
 app.get('/swagger.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
@@ -96,9 +93,9 @@ require('../config/routes').set_routes(app);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 server.listen(config.port, () => {
-  if (environment !== 'production' &&
-    environment !== 'development' &&
-    environment !== 'testing'
+  if (environment !== 'production'
+		&& environment !== 'development'
+		&& environment !== 'testing'
   ) {
     console.error(`NODE_ENV is set to ${environment}, but only production and development are valid.`);
     process.exit(1);

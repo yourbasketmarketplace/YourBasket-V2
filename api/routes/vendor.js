@@ -70,7 +70,6 @@ router.get('/brands', auth, (req, res) => BrandContoller().getVendorBrands(req, 
 
 router.get('/userdetail/:id', auth, (req, res) => UserContoller().getUserDetail(req, res));
 
-
 /**
  * @swagger
  * /api/vendor/userdetail/:id:

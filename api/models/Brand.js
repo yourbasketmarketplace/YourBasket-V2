@@ -9,6 +9,12 @@ const Brand = sequelize.define('Brand', {
     type: Sequelize.STRING,
     unique: false,
   },
+  slug: {
+    type: Sequelize.STRING,
+  },
+  category_ids: {
+    type: Sequelize.STRING,
+  },
   file_name: {
     type: Sequelize.STRING,
   },
@@ -30,7 +36,7 @@ const Brand = sequelize.define('Brand', {
 
 // eslint-disable-next-line
 Brand.prototype.toJSON = function () {
-  const values = Object.assign({}, this.get());
+  const values = { ...this.get() };
   return values;
 };
 

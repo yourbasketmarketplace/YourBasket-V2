@@ -2,29 +2,19 @@ const Sequelize = require('sequelize');
 
 const sequelize = require('../../config/database');
 
-const tableName = 'pages';
+const tableName = 'faqs';
 
-const Page = sequelize.define('Page', {
-  name: {
-    type: Sequelize.STRING,
-    unique: false,
-  },
-  file_name: {
-    type: Sequelize.STRING,
-  },
-  file_path: {
-    type: Sequelize.STRING,
-  },
-  description: {
+const Faq = sequelize.define('Faq', {
+  question: {
     type: Sequelize.TEXT,
     unique: false,
   },
-  description2: {
+  answer: {
     type: Sequelize.TEXT,
     unique: false,
   },
-  page_type: {
-    type: Sequelize.STRING,
+  user_id: {
+    type: Sequelize.INTEGER,
     unique: false,
   },
   status: {
@@ -37,9 +27,9 @@ const Page = sequelize.define('Page', {
 });
 
 // eslint-disable-next-line
-Page.prototype.toJSON = function () {
+Faq.prototype.toJSON = function () {
   const values = { ...this.get() };
   return values;
 };
 
-module.exports = Page;
+module.exports = Faq;

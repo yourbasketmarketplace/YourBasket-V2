@@ -40,7 +40,7 @@ const auth = require('../policies/auth.policy');
  */
 
 router.post('/authorize', (req, res) => UserContoller().login(req, res));
-
+router.post('/authorize/social', (req, res) => UserContoller().socialLogin(req, res));
 
 /**
  * @swagger
@@ -95,7 +95,7 @@ router.post('/authorize', (req, res) => UserContoller().login(req, res));
  *
  */
 
-router.post('/register', (req, res) => UserContoller().register(req, res));
+router.post('/register', fileUpoload().signleUpload('image'), (req, res) => UserContoller().register(req, res));
 
 /**
  * @swagger
@@ -314,8 +314,10 @@ router.put('/:id', auth, fileUpoload().signleUpload('image'), (req, res) => User
  *
  */
 
-
+router.post('/verifyotp', (req, res) => UserContoller().verifyOtp(req, res));
 router.post('/forgotpassword', (req, res) => UserContoller().forgotPassword(req, res));
+router.post('/resetpassword', (req, res) => UserContoller().resetPassword(req, res));
+
 /**
  * @swagger
  * /api/users/changepassword:
@@ -355,7 +357,8 @@ router.post('/forgotpassword', (req, res) => UserContoller().forgotPassword(req,
  *
  */
 
-
 router.post('/changepassword', auth, (req, res) => UserContoller().changePassword(req, res));
+
+router.get('/notifications', auth, (req, res) => UserContoller().getNotifications(req, res));
 
 module.exports = router;

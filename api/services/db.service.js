@@ -23,6 +23,7 @@ const dbService = (environment, migrate) => {
       Order,
       OrderItem,
       Tempcart,
+      Variation,
     } = AllModels();
     Category.hasMany(Category, { foreignKey: 'parent_id', sourceKey: 'id' });
     Category.belongsTo(Category, { foreignKey: 'parent_id', as: 'parentcategory', targetKey: 'id' });
@@ -41,11 +42,13 @@ const dbService = (environment, migrate) => {
     Tempcart.belongsTo(Product, { foreignKey: 'product_id', targetKey: 'id' });
     Order.belongsTo(User, { foreignKey: 'user_id', targetKey: 'id' });
     Order.belongsTo(Address, { foreignKey: 'address_id', targetKey: 'id' });
+    Order.belongsTo(Address, { foreignKey: 'billing_address_id', as: 'BillingAddress', targetKey: 'id' });
     User.hasMany(Order, { foreignKey: 'user_id', targetKey: 'id' });
     Address.belongsTo(User, { foreignKey: 'user_id', targetKey: 'id' });
     Product.hasMany(Cart, { foreignKey: 'product_id', targetKey: 'id' });
     User.hasMany(Cart, { foreignKey: 'user_id', targetKey: 'id' });
     Product.hasMany(Tempcart, { foreignKey: 'product_id', targetKey: 'id' });
+    Product.hasMany(Variation, { foreignKey: 'product_id', targetKey: 'id' });
     User.hasMany(Tempcart, { foreignKey: 'user_id', targetKey: 'id' });
     OrderItem.belongsTo(User, { foreignKey: 'vendor_id', targetKey: 'id' });
     OrderItem.belongsTo(Product, { foreignKey: 'product_id', targetKey: 'id' });

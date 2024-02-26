@@ -23,6 +23,14 @@ const OrderItem = sequelize.define('OrderItem', {
     type: Sequelize.STRING,
     unique: false,
   },
+  cancel_reason: {
+    type: Sequelize.STRING,
+    unique: false,
+  },
+  cancel_by: {
+    type: Sequelize.INTEGER,
+    unique: false,
+  },
   status: {
     type: Sequelize.ENUM,
     values: ['active', 'inactive'],
@@ -34,7 +42,7 @@ const OrderItem = sequelize.define('OrderItem', {
 
 // eslint-disable-next-line
 OrderItem.prototype.toJSON = function () {
-  const values = Object.assign({}, this.get());
+  const values = { ...this.get() };
   return values;
 };
 

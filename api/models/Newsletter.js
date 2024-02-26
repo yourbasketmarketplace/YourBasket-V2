@@ -2,21 +2,15 @@ const Sequelize = require('sequelize');
 
 const sequelize = require('../../config/database');
 
-const tableName = 'blogs';
+const tableName = 'newsletters';
 
-const Blog = sequelize.define('Blog', {
-  name: {
+const Newsletter = sequelize.define('Newsletter', {
+  email: {
     type: Sequelize.STRING,
-    unique: false,
+    unique: true,
   },
-  file_name: {
+  gender: {
     type: Sequelize.STRING,
-  },
-  file_path: {
-    type: Sequelize.STRING,
-  },
-  description: {
-    type: Sequelize.TEXT,
     unique: false,
   },
   status: {
@@ -29,9 +23,9 @@ const Blog = sequelize.define('Blog', {
 });
 
 // eslint-disable-next-line
-Blog.prototype.toJSON = function () {
+Newsletter.prototype.toJSON = function () {
   const values = { ...this.get() };
   return values;
 };
 
-module.exports = Blog;
+module.exports = Newsletter;

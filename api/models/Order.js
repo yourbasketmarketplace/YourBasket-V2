@@ -21,6 +21,16 @@ const Order = sequelize.define('Order', {
   item_amount: {
     type: Sequelize.FLOAT,
   },
+  shipping_amount: {
+    type: Sequelize.FLOAT,
+  },
+  cancel_amount: {
+    type: Sequelize.FLOAT,
+  },
+  cancel_logs: {
+    type: Sequelize.TEXT,
+    unique: false,
+  },
   order_tracking_id: {
     type: Sequelize.STRING,
   },
@@ -29,8 +39,8 @@ const Order = sequelize.define('Order', {
   },
   status: {
     type: Sequelize.ENUM,
-    values: ['active', 'inactive'],
-    defaultValue: 'active',
+    values: ['inprocess', 'completed', 'delivered', 'cancelled', 'refunded', 'hold'],
+    defaultValue: 'inprocess',
   },
 }, {
   tableName,
@@ -38,7 +48,7 @@ const Order = sequelize.define('Order', {
 
 // eslint-disable-next-line
 Order.prototype.toJSON = function () {
-  const values = Object.assign({}, this.get());
+  const values = { ...this.get() };
   return values;
 };
 

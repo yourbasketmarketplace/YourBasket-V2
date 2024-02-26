@@ -20,7 +20,15 @@ const Address = sequelize.define('Address', {
     type: Sequelize.STRING,
     unique: false,
   },
+  phone_alt: {
+    type: Sequelize.STRING,
+    unique: false,
+  },
   address: {
+    type: Sequelize.STRING,
+    unique: false,
+  },
+  landmark: {
     type: Sequelize.STRING,
     unique: false,
   },
@@ -31,6 +39,11 @@ const Address = sequelize.define('Address', {
   city: {
     type: Sequelize.STRING,
     unique: false,
+  },
+  type: {
+    type: Sequelize.ENUM,
+    values: ['home', 'office'],
+    defaultValue: 'home',
   },
   status: {
     type: Sequelize.ENUM,
@@ -43,7 +56,7 @@ const Address = sequelize.define('Address', {
 
 // eslint-disable-next-line
 Address.prototype.toJSON = function () {
-  const values = Object.assign({}, this.get());
+  const values = { ...this.get() };
   return values;
 };
 

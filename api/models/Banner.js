@@ -20,12 +20,25 @@ const Banner = sequelize.define('Banner', {
     unique: false,
   },
   from_date: {
-    type: Sequelize.DATE,
+    type: Sequelize.TEXT,
     unique: false,
   },
   to_date: {
-    type: Sequelize.DATE,
+    type: Sequelize.TEXT,
     unique: false,
+  },
+  url: {
+    type: Sequelize.TEXT,
+    unique: false,
+  },
+  banner_order: {
+    type: Sequelize.INTEGER,
+    unique: false,
+  },
+  type: {
+    type: Sequelize.DECIMAL,
+    allowNull: false,
+    defaultValue: '1',
   },
   status: {
     type: Sequelize.ENUM,
@@ -38,7 +51,7 @@ const Banner = sequelize.define('Banner', {
 
 // eslint-disable-next-line
 Banner.prototype.toJSON = function () {
-  const values = Object.assign({}, this.get());
+  const values = { ...this.get() };
   return values;
 };
 

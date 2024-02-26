@@ -89,7 +89,6 @@ const AddressController = () => {
     }
   };
 
-
   const update = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
@@ -134,13 +133,18 @@ const AddressController = () => {
     }
   };
 
-
   const destroy = async (req, res) => {
     // params is part of an url
     const { id } = req.params;
     const { Address } = AllModels();
+    const userInfo = req.token;
     try {
-      const data = Address.findById(id);
+      const data = await Address.findOne({
+        where: {
+          id,
+          user_id: userInfo.id,
+        },
+      });
 
       if (!data) {
         return res.status(400).json({
